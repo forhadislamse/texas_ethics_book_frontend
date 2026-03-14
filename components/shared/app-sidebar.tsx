@@ -12,6 +12,8 @@ import {
   Home,
   InfoIcon,
   LayoutDashboard,
+  Search,
+  BookOpen,
   User,
   Users,
 } from "lucide-react";
@@ -27,6 +29,16 @@ const data = {
         title: "Dashboard",
         url: "/user",
         icon: LayoutDashboard,
+      },
+      {
+        title: "Guide Reader",
+        url: "/user/reader",
+        icon: BookOpen,
+      },
+      {
+        title: "Search Guide",
+        url: "/user/search",
+        icon: Search,
       },
       {
         title: "Your Profile",

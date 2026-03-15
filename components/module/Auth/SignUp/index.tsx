@@ -245,8 +245,8 @@ export default function RegistrationForm() {
       <div className="w-full max-w-6xl flex flex-col md:flex-row gap-8 items-center">
         <div className="w-full md:w-1/2 bg-[#0a1628] rounded-3xl p-12 flex items-center justify-center lg:min-h-200">
           <Image
-            src="/bpc_logo.png"
-            alt="Tennis"
+            src="/Logo.png"
+            alt="Logo"
             className="w-full h-full object-cover"
             width={500}
             height={500}

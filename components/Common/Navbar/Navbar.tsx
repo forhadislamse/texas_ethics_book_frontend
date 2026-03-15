@@ -60,18 +60,17 @@ export default function Navbar() {
   return (
     <div className="bg-linear-to-b from-[#dff98d] mb-6 to-[#f1fdcb]">
       <nav
-        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-          isScrolled
+        className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${isScrolled
             ? "bg-[#dff98d]/80 backdrop-blur-md border-b shadow-sm"
             : "bg-[#f1fdcb]/70 backdrop-blur-sm"
-        }`}
+          }`}
       >
         <div className="mx-auto flex items-center justify-between py-3 px-4 lg:px-6 max-w-7xl">
           <div className="hidden lg:flex items-center gap-32 bg-white rounded-4xl py-2 px-16">
             <div className="shrink-0 transition-transform duration-200 hover:scale-105">
               <Link href="/">
                 <Image
-                  src="/bpc_logo.png"
+                  src="/Logo.png"
                   alt="Logo"
                   width={100}
                   height={100}
@@ -84,11 +83,10 @@ export default function Navbar() {
                 <button
                   key={idx}
                   onClick={() => handleNavigation(item.href)}
-                  className={`py-3 px-5 rounded-full transition-all duration-200 active:scale-95 ${
-                    isActive(item.href)
+                  className={`py-3 px-5 rounded-full transition-all duration-200 active:scale-95 ${isActive(item.href)
                       ? "underline underline-offset-6 decoration-2 text-black"
                       : "hover:bg-gray-100"
-                  }`}
+                    }`}
                   aria-current={isActive(item.href) ? "page" : undefined}
                 >
                   {item.label}
@@ -118,14 +116,13 @@ export default function Navbar() {
 
       {/* Mobile Sidebar */}
       <div
-        className={`fixed top-0 right-0 z-50 h-full w-72 sm:w-80 bg-[#f6f1e5]/95 backdrop-blur-md shadow-2xl transform transition-transform duration-300 ease-out ${
-          sidebarOpen ? "translate-x-0" : "translate-x-full"
-        } flex flex-col justify-between`}
+        className={`fixed top-0 right-0 z-50 h-full w-72 sm:w-80 bg-[#f6f1e5]/95 backdrop-blur-md shadow-2xl transform transition-transform duration-300 ease-out ${sidebarOpen ? "translate-x-0" : "translate-x-full"
+          } flex flex-col justify-between`}
       >
         {/* Sidebar Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200/50">
           <Image
-            src="/bpc_logo.png"
+            src="/Logo.png"
             alt="Logo"
             width={100}
             height={100}
@@ -146,11 +143,10 @@ export default function Navbar() {
             <button
               key={idx}
               onClick={() => handleNavigation(item.href)}
-              className={`w-full text-left py-4 px-5 rounded-2xl text-lg font-medium transition-all duration-200 active:scale-95 border ${
-                isActive(item.href)
+              className={`w-full text-left py-4 px-5 rounded-2xl text-lg font-medium transition-all duration-200 active:scale-95 border ${isActive(item.href)
                   ? "bg-[#d99b35] text-white border-[#d99b35]"
                   : "hover:bg-gray-100 border-[#FFDFAA]"
-              }`}
+                }`}
             >
               {item.label}
             </button>

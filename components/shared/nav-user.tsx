@@ -18,7 +18,7 @@ import {
 import placeholder from "@/src/assets/placeholders/image_placeholder.png";
 import { ChevronsUpDown, LogOut } from "lucide-react";
 
-import { useGetMeQuery } from "@/redux/api/authApi";
+import { useGetMeQuery, useLogoutMutation } from "@/redux/api/authApi";
 import { logout } from "@/redux/features/authSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import Image from "next/image";
@@ -30,11 +30,17 @@ export function NavUser() {
   const dispatch = useAppDispatch();
 
   const { data, error, isLoading } = useGetMeQuery({ skip: !token }) as any;
+  const [logoutMutation] = useLogoutMutation();
 
   const router = useRouter();
   const pathname = usePathname();
 
   const handleLogout = async () => {
+    try {
+      await logoutMutation({}).unwrap();
+    } catch (err) {
+      console.error("Logout failed", err);
+    }
     dispatch(logout());
     router.push("/login?redirect=" + pathname);
   };

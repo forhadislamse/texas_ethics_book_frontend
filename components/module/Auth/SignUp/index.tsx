@@ -211,7 +211,7 @@ export default function RegistrationForm() {
         localStorage.removeItem("step2Data");
         localStorage.removeItem("photoPreview");
 
-        router.push("/login");
+        router.push(`/register/verify-email?email=${payload.email}`);
       }
     } catch (error: any) {
       toast.error(error?.data?.message || "Registration failed");

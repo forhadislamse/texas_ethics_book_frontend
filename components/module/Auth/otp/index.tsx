@@ -29,13 +29,26 @@ const otpSchema = z.object({
 
 type OtpFormData = z.infer<typeof otpSchema>;
 
-export default function Otp() {
+interface OtpProps {
+  successRedirect?: (email: string) => string;
+  successMessage?: string;
+  verifyMutation?: any;
+}
+
+export default function Otp({
+  successRedirect = (email) => `/forgot-password/otp/change-password?email=${email}`,
+  successMessage,
+  verifyMutation
+}: OtpProps) {
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
 
   const [reSendOtp] = useResendOtpMutation() as any;
-  const [verifiedOtp, { isLoading: isVerifyingOtp }] =
-    useVerifyOtpMutation() as any;
+  const [defaultVerifyOtp, { isLoading: isVerifyingOtpDefault }] = useVerifyOtpMutation() as any;
+  const [providedVerifyOtp, { isLoading: isVerifyingOtpProvided }] = verifyMutation ? verifyMutation() : [null, { isLoading: false }];
+
+  const verifiedOtp = verifyMutation ? providedVerifyOtp : defaultVerifyOtp;
+  const isVerifyingOtp = verifyMutation ? isVerifyingOtpProvided : isVerifyingOtpDefault;
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [otpValues, setOtpValues] = useState<string[]>(Array(4).fill(""));
@@ -57,11 +70,9 @@ export default function Otp() {
       toast.error("Email not found");
       return;
     }
-    // console.log("email", email);
 
     try {
       const res = await reSendOtp({ email: email }).unwrap();
-      // console.log("res", res);
       if (res.success) {
         toast.success(res.message);
       } else {
@@ -124,14 +135,11 @@ export default function Otp() {
 
     const payload = { email: email, otp: Number(data.otp.join("")) };
 
-    // console.log("payload", payload);
-
     try {
       const res = await verifiedOtp(payload).unwrap();
-      // console.log("res", res);
       if (res.success) {
-        toast.success(res.message);
-        router.push(`/forgot-password/otp/change-password?email=${email}`);
+        toast.success(successMessage || res.message);
+        router.push(successRedirect(email));
       } else {
         toast.error(res.message || "Failed to verify OTP");
       }

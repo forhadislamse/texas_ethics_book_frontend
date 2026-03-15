@@ -23,27 +23,20 @@ export async function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  if (!accessToken && !refreshToken && !authRoutes.includes(pathname)) {
+  if (authRoutes.includes(pathname)) {
+    if (accessToken || refreshToken) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+    return NextResponse.next();
+  }
+
+  if (!accessToken && !refreshToken) {
     return NextResponse.redirect(
       new URL(`/login?redirect=${pathname}`, request.url),
     );
   }
 
-  let user: IUser | null = null;
-
-  if (accessToken) {
-    try {
-      user = decodeJwt(accessToken);
-      console.log({ proxyts: user });
-    } catch (error) {
-      console.log("error", error);
-      return NextResponse.redirect(
-        new URL(`/login?redirect=${pathname}`, request.url),
-      );
-    }
-  }
-
-  return NextResponse.redirect(new URL("/home", request.url));
+  return NextResponse.next();
 }
 
 export const config = {

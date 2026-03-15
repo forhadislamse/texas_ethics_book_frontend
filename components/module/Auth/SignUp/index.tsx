@@ -190,26 +190,16 @@ export default function RegistrationForm() {
     localStorage.setItem("step2Data", JSON.stringify(step2DataToSave));
 
     const payload = {
-      firstName: step1Data.firstName,
-      lastName: step1Data.lastName,
+      fullName: `${step1Data.firstName} ${step1Data.lastName}`,
       email: data.email,
       password: data.password,
-      skillLevel: step1Data.skillLevel,
-      dateOfBirth: step1Data.dateOfBirth,
-      phoneNumber: step1Data.phoneNumber,
+      phone: step1Data.phoneNumber,
+      role: "USER",
+      gender: "Male"
     };
 
-    const formData = new FormData();
-
-    formData.append("data", JSON.stringify(payload));
-
-    if (photo) {
-      formData.append("image", photo);
-    }
-    console.log("formData", formData);
-
     try {
-      const res = await register(formData).unwrap();
+      const res = await register(payload).unwrap();
 
       if (res.success) {
         toast.success(res.message || "Registration successful");

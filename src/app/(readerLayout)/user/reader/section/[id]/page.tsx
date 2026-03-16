@@ -29,11 +29,11 @@ const FormattedContent = ({ content, internalRefs, externalRefs }: {
 }) => {
     if (!content) return null;
 
-    let elements: (string | JSX.Element)[] = [content];
+    let elements: (string | React.ReactNode)[] = [content];
 
     // Handle Internal References (Popups)
     internalRefs?.forEach((ref) => {
-        const newElements: (string | JSX.Element)[] = [];
+        const newElements: (string | React.ReactNode)[] = [];
         elements.forEach((el) => {
             if (typeof el !== 'string') {
                 newElements.push(el);
@@ -77,7 +77,7 @@ const FormattedContent = ({ content, internalRefs, externalRefs }: {
 
     // Handle External References (Links)
     externalRefs?.forEach((ref) => {
-        const newElements: (string | JSX.Element)[] = [];
+        const newElements: (string | React.ReactNode)[] = [];
         elements.forEach((el) => {
             if (typeof el !== 'string') {
                 newElements.push(el);

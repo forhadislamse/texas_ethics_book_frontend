@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useGetSectionByIdQuery } from "@/redux/api/guideApi";
@@ -10,7 +11,6 @@ import {
     Scale,
     Clock,
     ChevronLeft,
-    CheckCircle2,
     ExternalLink,
     BookOpen
 } from "lucide-react";
@@ -59,7 +59,7 @@ const FormattedContent = ({ content, internalRefs, externalRefs }: {
                                     <h4 className="text-sm font-bold text-white leading-tight">{ref.popupTitle}</h4>
                                 </div>
                                 <div className="p-4 bg-white text-xs leading-relaxed text-gray-600 italic">
-                                    "{ref.popupExcerpt}"
+                                    &quot;{ref.popupExcerpt}&quot;
                                 </div>
                                 <div className="p-3 bg-gray-50 border-t border-gray-100 flex justify-end">
                                      <button className="text-[10px] font-bold text-blue-600 hover:text-blue-700 transition-colors uppercase tracking-wider">View Full Rule</button>
@@ -223,7 +223,7 @@ export default function SectionDetailsPage() {
                                 <Info size={16} className="text-blue-400" />
                                 Practice Notes
                             </div>
-                            <div className="p-10 text-gray-600 leading-relaxed text-lg font-medium italic whitespace-pre-wrap bg-gradient-to-br from-white to-gray-50/50">
+                            <div className="p-10 text-gray-600 leading-relaxed text-lg font-medium italic whitespace-pre-wrap bg-linear-to-br from-white to-gray-50/50">
                                 {section.practiceNotes}
                             </div>
                         </div>

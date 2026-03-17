@@ -23,17 +23,17 @@ export default function LandingPage() {
                                     Texas Ethics Laws — The Complete <span className="text-blue-600">Legal Practice Guide</span>
                                 </h1>
                                 <p className="text-xl text-gray-600 mb-10 leading-relaxed max-w-2xl">
-                                    A comprehensive digital companion for legal professionals. Fully searchable, cross-referenced, and updated with the latest ethics opinions and case law.
+                                    Master over 550 pages of annotated ethics rules, statutes, and case law in one comprehensive, searchable digital volume. Built for the modern Texas practitioner.
                                 </p>
                                 <div className="flex flex-col sm:flex-row gap-4">
                                     <Link href="/user/reader">
-                                        <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-7 rounded-xl text-lg font-bold transition-all shadow-lg hover:shadow-blue-200">
-                                            BROWSE THE GUIDE <ChevronRight className="ml-2" />
+                                        <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-7 rounded-xl text-lg font-bold transition-all shadow-lg hover:shadow-blue-200 uppercase">
+                                            PREVIEW THE GUIDE <ChevronRight className="ml-2" />
                                         </Button>
                                     </Link>
                                     <Link href="/register">
-                                        <Button size="lg" variant="outline" className="border-2 border-gray-200 px-8 py-7 rounded-xl text-lg font-bold hover:bg-white hover:border-blue-600 hover:text-blue-600 transition-all">
-                                            CREATE ACCOUNT
+                                        <Button size="lg" variant="outline" className="border-2 border-gray-200 px-8 py-7 rounded-xl text-lg font-bold hover:bg-white hover:border-blue-600 hover:text-blue-600 transition-all uppercase">
+                                            START SUBSCRIPTION
                                         </Button>
                                     </Link>
                                 </div>
@@ -138,7 +138,7 @@ export default function LandingPage() {
                 <div className="container mx-auto px-6 text-center relative z-10">
                     <h2 className="text-3xl lg:text-5xl font-bold text-white mb-8 font-outfit uppercase">Unlock the complete digital guide today.</h2>
                     <Link href="/register">
-                        <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-50 px-10 py-8 rounded-2xl text-xl font-bold uppercase tracking-widest transition-all shadow-2xl">Create Your Account</Button>
+                        <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-50 px-10 py-8 rounded-2xl text-xl font-bold uppercase tracking-widest transition-all shadow-2xl">START YOUR SUBSCRIPTION</Button>
                     </Link>
                     <p className="text-blue-100 mt-8 font-light italic text-lg">Trusted by Texas Legal Professionals.</p>
                 </div>

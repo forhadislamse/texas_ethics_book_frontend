@@ -30,7 +30,7 @@ export default function LandingPage() {
                 <div className="container mx-auto px-6 relative z-20">
                     <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-20">
                         <div className="lg:w-1/2 text-left flex flex-col justify-center">
-                            <h1 className="text-4xl lg:text-6xl font-bold text-white font-outfit leading-tight mb-8 uppercase tracking-tight">
+                            <h1 className="text-4xl lg:text-6xl font-bold text-white  leading-tight mb-8 uppercase tracking-tight">
                                 Texas Ethics Laws — <br className="hidden lg:block" />
                                 <span className="text-white">The Complete Legal <br className="hidden lg:block" /> Practice Guide</span>
                             </h1>
@@ -50,22 +50,39 @@ export default function LandingPage() {
                                 </Link>
                             </div>
                         </div>
-                        
-                        <div className="lg:w-1/2 relative flex justify-end items-center mt-12 lg:mt-0">
-                            {/* Natural Shadow Effect */}
-                            <div className="absolute -bottom-16 right-0 w-full h-32 bg-black/90 blur-[100px] rounded-full opacity-80 z-0"></div>
-                            
-                            {/* Static Massive Book Cover with Proper Overlap into white section */}
-                            <div className="relative -mb-48 lg:-mb-80 z-30">
-                                <Image
-                                    src={BookCover.src}
-                                    alt="Texas Ethics Laws Book Cover"
-                                    width={700}
-                                    height={1000}
-                                    className="w-full max-w-[450px] lg:max-w-[550px] h-auto drop-shadow-[0_50px_50px_rgba(0,0,0,0.65)]"
-                                    priority
-                                />
-                            </div>
+
+                        <div className="hidden lg:flex lg:w-1/2 justify-center lg:justify-end">
+                            <motion.div 
+                                initial={{ opacity: 0, x: 30 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.8, ease: "easeOut" }}
+                                className="relative"
+                            >
+                                {/* Glow effect */}
+                                <div className="absolute -inset-4 bg-[#0D7C84]/20 rounded-full blur-3xl"></div>
+                                
+                                <div className="relative bg-white/5 p-2 rounded-2xl backdrop-blur-sm border border-white/10 shadow-2xl">
+                                    <Image
+                                        src={BookCover}
+                                        alt="Texas Ethics Laws Book Cover"
+                                        width={700}
+                                        height={960}
+                                        className="rounded-xl shadow-2xl object-cover hover:scale-[1.01] transition-transform duration-500"
+                                        priority
+                                    />
+
+                                    {/* Floating Badge - Fixed to Corner */}
+                                    <div className="absolute bottom-4 -right-8 bg-white p-2 rounded-2xl shadow-xl border border-gray-100 flex items-center gap-3 shadow-blue-500/10 z-30">
+                                        <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-600">
+                                            <BadgeCheck />
+                                        </div>
+                                        <div className="text-left">
+                                            <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest leading-none mb-1">Authentic</p>
+                                            <p className="text-sm font-bold text-gray-900 leading-none">9th Edition</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </motion.div>
                         </div>
                     </div>
                 </div>
@@ -74,7 +91,7 @@ export default function LandingPage() {
             {/* Features Section */}
             <section className="py-24 bg-white">
                 <div className="container mx-auto px-6 text-center">
-                    <h2 className="text-4xl font-bold text-gray-900 mb-4 font-outfit uppercase">Master Every Aspect of Legal Ethics</h2>
+                    <h2 className="text-4xl font-bold text-gray-900 mb-4  uppercase">Master Every Aspect of Legal Ethics</h2>
                     <p className="text-gray-600 mb-16 max-w-2xl mx-auto italic text-lg">A powerful tool designed for the modern legal practice.</p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -88,7 +105,7 @@ export default function LandingPage() {
                                 <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6 mx-auto">
                                     {feature.icon}
                                 </div>
-                                <h3 className="text-xl font-bold mb-3 font-outfit uppercase">{feature.title}</h3>
+                                <h3 className="text-xl font-bold mb-3  uppercase">{feature.title}</h3>
                                 <p className="text-gray-500 text-sm leading-relaxed">{feature.desc}</p>
                             </div>
                         ))}
@@ -99,7 +116,7 @@ export default function LandingPage() {
             {/* Pricing Section */}
             <section className="py-24 bg-[#F8FAFC]">
                 <div className="container mx-auto px-6 text-center">
-                    <h2 className="text-4xl font-bold text-gray-900 mb-4 font-outfit uppercase">Simple Access Plans for the Digital Guide</h2>
+                    <h2 className="text-4xl font-bold text-gray-900 mb-4  uppercase">Simple Access Plans for the Digital Guide</h2>
                     <p className="text-gray-600 mb-16 max-w-2xl mx-auto text-lg italic">
                         Choose the plan that fits your needs and get instant access to the Texas Ethics Laws digital practice guide.
                     </p>
@@ -114,8 +131,8 @@ export default function LandingPage() {
                                 <div
                                     key={plan.id}
                                     className={`p-10 rounded-3xl border flex flex-col h-full relative transition-all duration-300 ${plan.isPopular
-                                            ? "bg-[#1E293B] text-white border-blue-500 shadow-2xl ring-4 ring-blue-500/20 scale-105 z-10"
-                                            : "bg-white text-gray-900 border-gray-100 shadow-sm hover:shadow-md"
+                                        ? "bg-[#1E293B] text-white border-blue-500 shadow-2xl ring-4 ring-blue-500/20 scale-105 z-10"
+                                        : "bg-white text-gray-900 border-gray-100 shadow-sm hover:shadow-md"
                                         }`}
                                 >
                                     {plan.isPopular && (
@@ -128,7 +145,7 @@ export default function LandingPage() {
                                         <h3 className={`text-xl font-bold uppercase mb-2 ${plan.isPopular ? "text-blue-400" : "text-gray-900"}`}>
                                             {plan.name}
                                         </h3>
-                                        <div className="text-4xl font-bold font-outfit">
+                                        <div className="text-4xl font-bold ">
                                             ${plan.price}
                                             <span className={`text-lg font-normal ${plan.isPopular ? "text-gray-400" : "text-gray-400"}`}>
                                                 {plan.duration === 'unlimited' ? '' : `/${plan.duration === 'yearly' ? 'yr' : 'mo'}`}
@@ -148,8 +165,8 @@ export default function LandingPage() {
                                     <Link href="/register">
                                         <Button
                                             className={`w-full py-6 rounded-xl font-bold uppercase tracking-widest transition-all ${plan.isPopular
-                                                    ? "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-900/40"
-                                                    : "border-2 hover:border-blue-600 hover:text-blue-600"
+                                                ? "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-900/40"
+                                                : "border-2 hover:border-blue-600 hover:text-blue-600"
                                                 }`}
                                             variant={plan.isPopular ? "default" : "outline"}
                                         >
@@ -167,7 +184,7 @@ export default function LandingPage() {
             <section className="py-20 bg-blue-600 relative overflow-hidden">
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
                 <div className="container mx-auto px-6 text-center relative z-10">
-                    <h2 className="text-3xl lg:text-5xl font-bold text-white mb-8 font-outfit uppercase">Unlock the complete digital guide today.</h2>
+                    <h2 className="text-3xl lg:text-5xl font-bold text-white mb-8  uppercase">Unlock the complete digital guide today.</h2>
                     <Link href="/register">
                         <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-50 px-10 py-8 rounded-2xl text-xl font-bold uppercase tracking-widest transition-all shadow-2xl">START YOUR SUBSCRIPTION</Button>
                     </Link>
@@ -178,7 +195,7 @@ export default function LandingPage() {
             {/* Footer */}
             <footer className="py-12 bg-white border-t border-gray-100">
                 <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
-                    <div className="font-outfit font-bold text-2xl tracking-tighter text-[#1E293B]">
+                    <div className=" font-bold text-2xl tracking-tighter text-[#1E293B]">
                         CATES <span className="text-blue-600">LEGAL</span>
                     </div>
                     <div className="text-gray-400 text-sm italic">

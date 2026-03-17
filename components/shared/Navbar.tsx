@@ -46,7 +46,7 @@ const Navbar = () => {
                             />
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-xl md:text-2xl font-bold font-outfit text-[#1E293B] leading-none">TEXAS LAW</span>
+                            <span className="text-xl md:text-2xl font-bold  text-[#1E293B] leading-none">TEXAS LAW</span>
                             <span className="text-xs md:text-sm text-blue-600 font-bold tracking-widest uppercase">Books</span>
                         </div>
                     </Link>

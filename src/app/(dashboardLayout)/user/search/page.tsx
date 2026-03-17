@@ -30,7 +30,7 @@ export default function SearchResultsPage() {
     return (
         <div className="max-w-5xl mx-auto py-8">
             <header className="mb-10">
-                <h1 className="text-3xl font-bold text-gray-900 mb-6 font-outfit">Search the Guide</h1>
+                <h1 className="text-3xl font-bold text-gray-900 mb-6 ">Search the Guide</h1>
                 <form onSubmit={handleSearch} className="relative max-w-2xl">
                     <Input
                         type="text"
@@ -72,7 +72,7 @@ export default function SearchResultsPage() {
                                                 <Badge variant="outline" className="text-blue-600 bg-blue-50 border-blue-100 mb-2">
                                                     Sec. {result.number}
                                                 </Badge>
-                                                <h3 className="text-xl font-bold text-gray-900 font-outfit">
+                                                <h3 className="text-xl font-bold text-gray-900 ">
                                                     {result.title}
                                                 </h3>
                                             </div>

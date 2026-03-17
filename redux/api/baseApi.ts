@@ -44,7 +44,7 @@ const baseQueryWithAuth: ReturnType<typeof fetchBaseQuery> = async (
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: baseQueryWithAuth,
-  tagTypes: ["User", "Events", "Chapters", "Chapter", "Section"],
+  tagTypes: ["User", "Events", "Chapters", "Chapter", "Section", "Plans", "Plan"],
   endpoints: (builder) => ({}),
 });
 

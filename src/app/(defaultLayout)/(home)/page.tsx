@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Search, BookOpen, ShieldCheck, CreditCard, ChevronRight, Check } from "lucide-react";
+import { useGetAllPlansQuery } from "@/redux/api/planApi";
+import { Search, BookOpen, ShieldCheck, CreditCard, ChevronRight, Check, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
 export default function LandingPage() {
+    const { data: plans, isLoading } = useGetAllPlansQuery(undefined);
     return (
         <div className="flex flex-col min-h-screen bg-white">
             {/* Hero Section */}
@@ -83,52 +85,69 @@ export default function LandingPage() {
             {/* Pricing Section */}
             <section className="py-24 bg-[#F8FAFC]">
                 <div className="container mx-auto px-6 text-center">
-                    <h2 className="text-4xl font-bold text-gray-900 mb-16 font-outfit uppercase">Choose Your Access Level</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                        {/* Free Tier */}
-                        <div className="bg-white p-10 rounded-3xl border border-gray-100 shadow-sm relative overflow-hidden flex flex-col h-full">
-                            <div className="mb-8">
-                                <h3 className="text-xl font-bold uppercase mb-2">Basic</h3>
-                                <div className="text-4xl font-bold font-outfit">$0<span className="text-lg text-gray-400 font-normal">/mo</span></div>
-                            </div>
-                            <ul className="text-left space-y-4 mb-10 flex-grow">
-                                {["Limited Chapter Access", "Basic Table of Contents", "Read-only access"].map((item, i) => (
-                                    <li key={i} className="flex items-center gap-3 text-gray-600 italic">
-                                        <Check size={18} className="text-green-500" /> {item}
-                                    </li>
-                                ))}
-                            </ul>
-                            <Link href="/register">
-                                <Button variant="outline" className="w-full py-6 rounded-xl border-2 font-bold uppercase tracking-widest hover:border-blue-600 hover:text-blue-600">Get Started</Button>
-                            </Link>
+                    <h2 className="text-4xl font-bold text-gray-900 mb-4 font-outfit uppercase">Simple Access Plans for the Digital Guide</h2>
+                    <p className="text-gray-600 mb-16 max-w-2xl mx-auto text-lg italic">
+                        Choose the plan that fits your needs and get instant access to the Texas Ethics Laws digital practice guide.
+                    </p>
+                    
+                    {isLoading ? (
+                        <div className="flex justify-center items-center py-20">
+                            <Loader2 className="h-10 w-10 animate-spin text-blue-600" />
                         </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                            {plans?.data?.map((plan: any) => (
+                                <div 
+                                    key={plan.id} 
+                                    className={`p-10 rounded-3xl border flex flex-col h-full relative transition-all duration-300 ${
+                                        plan.isPopular 
+                                        ? "bg-[#1E293B] text-white border-blue-500 shadow-2xl ring-4 ring-blue-500/20 scale-105 z-10" 
+                                        : "bg-white text-gray-900 border-gray-100 shadow-sm hover:shadow-md"
+                                    }`}
+                                >
+                                    {plan.isPopular && (
+                                        <div className="absolute top-4 right-4 rotate-12 bg-blue-600 text-[10px] font-bold py-1 px-3 rounded-full uppercase tracking-tighter text-white">
+                                            Recommended
+                                        </div>
+                                    )}
+                                    
+                                    <div className="mb-8">
+                                        <h3 className={`text-xl font-bold uppercase mb-2 ${plan.isPopular ? "text-blue-400" : "text-gray-900"}`}>
+                                            {plan.name}
+                                        </h3>
+                                        <div className="text-4xl font-bold font-outfit">
+                                            ${plan.price}
+                                            <span className={`text-lg font-normal ${plan.isPopular ? "text-gray-400" : "text-gray-400"}`}>
+                                                /{plan.duration === 'yearly' ? 'yr' : 'mo'}
+                                            </span>
+                                        </div>
+                                    </div>
 
-                        {/* Premium Tier */}
-                        <div className="bg-[#1E293B] p-10 rounded-3xl border border-gray-100 shadow-2xl relative overflow-hidden flex flex-col h-full text-white ring-4 ring-blue-500/20">
-                            <div className="absolute top-4 right-4 rotate-12 bg-blue-600 text-[10px] font-bold py-1 px-3 rounded-full uppercase tracking-tighter">Recommended</div>
-                            <div className="mb-8">
-                                <h3 className="text-xl font-bold uppercase mb-2 text-blue-400">Professional</h3>
-                                <div className="text-4xl font-bold font-outfit">$49<span className="text-lg text-gray-400 font-normal">/mo</span></div>
-                            </div>
-                            <ul className="text-left space-y-4 mb-10 flex-grow">
-                                {[
-                                    "Unlimited Guide Access",
-                                    "Real-time Full-text Search",
-                                    "Practice Notes & Citations",
-                                    "Ethics Opinions Database",
-                                    "Case Law Integration",
-                                    "Priority Email Support"
-                                ].map((item, i) => (
-                                    <li key={i} className="flex items-center gap-3 italic">
-                                        <Check size={18} className="text-blue-400" /> {item}
-                                    </li>
-                                ))}
-                            </ul>
-                            <Link href="/register">
-                                <Button className="w-full py-6 rounded-xl bg-blue-600 hover:bg-blue-700 font-bold uppercase tracking-widest text-white transition-all shadow-lg shadow-blue-900/40">Subscribe Now</Button>
-                            </Link>
+                                    <ul className="text-left space-y-4 mb-10 flex-grow">
+                                        {plan.features?.map((feature: string, idx: number) => (
+                                            <li key={idx} className={`flex items-center gap-3 italic ${plan.isPopular ? "text-white" : "text-gray-600"}`}>
+                                                <Check size={18} className={plan.isPopular ? "text-blue-400" : "text-green-500"} />
+                                                {feature}
+                                            </li>
+                                        ))}
+                                    </ul>
+
+                                    <Link href="/register">
+                                        <Button 
+                                            className={`w-full py-6 rounded-xl font-bold uppercase tracking-widest transition-all ${
+                                                plan.isPopular 
+                                                ? "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-900/40" 
+                                                : "border-2 hover:border-blue-600 hover:text-blue-600"
+                                            }`}
+                                            variant={plan.isPopular ? "default" : "outline"}
+                                        >
+                                            {plan.price === 0 ? "Get Started" : "Subscribe Now"}
+                                        </Button>
+                                    </Link>
+                                </div>
+                            ))}
                         </div>
-                    </div>
+                    )}
                 </div>
             </section>
 

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useGetAllPlansQuery } from "@/redux/api/planApi";
-import { Search, BookOpen, ShieldCheck, CreditCard, ChevronRight, Check, Loader2 } from "lucide-react";
+import { Search, BookOpen, ShieldCheck, CreditCard, ChevronRight, BadgeCheck, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
@@ -107,7 +107,7 @@ export default function LandingPage() {
                                 >
                                     {plan.isPopular && (
                                         <div className="absolute top-4 right-4 rotate-12 bg-blue-600 text-[10px] font-bold py-1 px-3 rounded-full uppercase tracking-tighter text-white">
-                                            Recommended
+                                            Popular
                                         </div>
                                     )}
                                     
@@ -118,7 +118,7 @@ export default function LandingPage() {
                                         <div className="text-4xl font-bold font-outfit">
                                             ${plan.price}
                                             <span className={`text-lg font-normal ${plan.isPopular ? "text-gray-400" : "text-gray-400"}`}>
-                                                /{plan.duration === 'yearly' ? 'yr' : 'mo'}
+                                                {plan.duration === 'unlimited' ? '' : `/${plan.duration === 'yearly' ? 'yr' : 'mo'}`}
                                             </span>
                                         </div>
                                     </div>
@@ -126,7 +126,7 @@ export default function LandingPage() {
                                     <ul className="text-left space-y-4 mb-10 flex-grow">
                                         {plan.features?.map((feature: string, idx: number) => (
                                             <li key={idx} className={`flex items-center gap-3 italic ${plan.isPopular ? "text-white" : "text-gray-600"}`}>
-                                                <Check size={18} className={plan.isPopular ? "text-blue-400" : "text-green-500"} />
+                                                <BadgeCheck size={18} className={plan.isPopular ? "text-blue-400" : "text-green-500"} />
                                                 {feature}
                                             </li>
                                         ))}

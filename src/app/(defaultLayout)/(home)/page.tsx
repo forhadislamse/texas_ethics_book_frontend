@@ -14,10 +14,10 @@ export default function LandingPage() {
     return (
         <div className="flex flex-col min-h-screen bg-white">
             {/* Hero Section */}
-            <section className="relative min-h-[600px] lg:min-h-[700px] flex items-center pt-24 pb-0 bg-[#0F172A] z-20">
+            <section className="relative min-h-[600px] lg:min-h-[750px] flex items-center pt-24 pb-0 bg-[#0F172A] z-20">
                 {/* Background Image Wrapper */}
                 <div className="absolute inset-0 z-0 overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#0F172A] via-[#0F172A]/95 to-[#0F172A]/30 z-10"></div>
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#0F172A] via-[#0F172A]/95 to-[#0F172A]/40 z-10"></div>
                     <Image
                         src={HeroBg.src}
                         alt="Legal Library Background"
@@ -28,23 +28,23 @@ export default function LandingPage() {
                 </div>
 
                 <div className="container mx-auto px-6 relative z-20">
-                    <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-16">
+                    <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-20">
                         <div className="lg:w-1/2 text-left flex flex-col justify-center">
-                            <h1 className="text-4xl lg:text-5xl font-bold text-white font-outfit leading-tight mb-6 uppercase tracking-tight">
+                            <h1 className="text-4xl lg:text-6xl font-bold text-white font-outfit leading-tight mb-8 uppercase tracking-tight">
                                 Texas Ethics Laws — <br className="hidden lg:block" />
-                                <span className="text-white">The Complete Legal Practice Guide</span>
+                                <span className="text-white">The Complete Legal <br className="hidden lg:block" /> Practice Guide</span>
                             </h1>
-                            <p className="text-lg text-gray-300 mb-10 leading-relaxed max-w-xl font-light italic">
+                            <p className="text-xl text-gray-300 mb-12 leading-relaxed max-w-xl font-light italic">
                                 Master over 550 pages of annotated ethics rules, statutes, and case law in one comprehensive, searchable digital volume. Built for the modern Texas practitioner.
                             </p>
-                            <div className="flex flex-wrap gap-4">
+                            <div className="flex flex-wrap gap-5">
                                 <Link href="/register">
-                                    <Button size="lg" className="bg-[#0D7C84] hover:bg-[#0B656B] text-white px-8 py-7 rounded-full text-lg font-bold transition-all shadow-xl hover:shadow-[#0D7C84]/40 uppercase tracking-widest">
+                                    <Button size="lg" className="bg-[#0D7C84] hover:bg-[#0B656B] text-white px-10 py-7 rounded-full text-xl font-bold transition-all shadow-xl hover:shadow-[#0D7C84]/40 uppercase tracking-widest">
                                         Start Subscription
                                     </Button>
                                 </Link>
                                 <Link href="/user/reader">
-                                    <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-[#0F172A] bg-transparent px-8 py-7 rounded-full text-lg font-bold transition-all uppercase tracking-widest">
+                                    <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-[#0F172A] bg-transparent px-10 py-7 rounded-full text-xl font-bold transition-all uppercase tracking-widest">
                                         Preview the Guide
                                     </Button>
                                 </Link>
@@ -55,14 +55,14 @@ export default function LandingPage() {
                             {/* Natural Shadow Effect */}
                             <div className="absolute -bottom-16 right-0 w-full h-32 bg-black/90 blur-[100px] rounded-full opacity-80 z-0"></div>
                             
-                            {/* Massive Book Cover with Proper Overlap into white section */}
+                            {/* Static Massive Book Cover with Proper Overlap into white section */}
                             <div className="relative -mb-48 lg:-mb-80 z-30">
                                 <Image
                                     src={BookCover.src}
                                     alt="Texas Ethics Laws Book Cover"
-                                    width={600}
-                                    height={800}
-                                    className="w-full max-w-[450px] lg:max-w-[550px] h-auto drop-shadow-[0_40px_40px_rgba(0,0,0,0.6)]"
+                                    width={700}
+                                    height={1000}
+                                    className="w-full max-w-[450px] lg:max-w-[550px] h-auto drop-shadow-[0_50px_50px_rgba(0,0,0,0.65)]"
                                     priority
                                 />
                             </div>
@@ -70,9 +70,6 @@ export default function LandingPage() {
                     </div>
                 </div>
             </section>
-
-            {/* Tight spacer for a clean overlap look */}
-            <div className="h-24 lg:h-40 bg-white"></div>
 
             {/* Features Section */}
             <section className="py-24 bg-white">
@@ -106,7 +103,7 @@ export default function LandingPage() {
                     <p className="text-gray-600 mb-16 max-w-2xl mx-auto text-lg italic">
                         Choose the plan that fits your needs and get instant access to the Texas Ethics Laws digital practice guide.
                     </p>
-                    
+
                     {isLoading ? (
                         <div className="flex justify-center items-center py-20">
                             <Loader2 className="h-10 w-10 animate-spin text-blue-600" />
@@ -114,20 +111,19 @@ export default function LandingPage() {
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
                             {plans?.data?.map((plan: any) => (
-                                <div 
-                                    key={plan.id} 
-                                    className={`p-10 rounded-3xl border flex flex-col h-full relative transition-all duration-300 ${
-                                        plan.isPopular 
-                                        ? "bg-[#1E293B] text-white border-blue-500 shadow-2xl ring-4 ring-blue-500/20 scale-105 z-10" 
-                                        : "bg-white text-gray-900 border-gray-100 shadow-sm hover:shadow-md"
-                                    }`}
+                                <div
+                                    key={plan.id}
+                                    className={`p-10 rounded-3xl border flex flex-col h-full relative transition-all duration-300 ${plan.isPopular
+                                            ? "bg-[#1E293B] text-white border-blue-500 shadow-2xl ring-4 ring-blue-500/20 scale-105 z-10"
+                                            : "bg-white text-gray-900 border-gray-100 shadow-sm hover:shadow-md"
+                                        }`}
                                 >
                                     {plan.isPopular && (
                                         <div className="absolute top-4 right-4 rotate-12 bg-blue-600 text-[10px] font-bold py-1 px-3 rounded-full uppercase tracking-tighter text-white">
                                             Popular
                                         </div>
                                     )}
-                                    
+
                                     <div className="mb-8">
                                         <h3 className={`text-xl font-bold uppercase mb-2 ${plan.isPopular ? "text-blue-400" : "text-gray-900"}`}>
                                             {plan.name}
@@ -150,12 +146,11 @@ export default function LandingPage() {
                                     </ul>
 
                                     <Link href="/register">
-                                        <Button 
-                                            className={`w-full py-6 rounded-xl font-bold uppercase tracking-widest transition-all ${
-                                                plan.isPopular 
-                                                ? "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-900/40" 
-                                                : "border-2 hover:border-blue-600 hover:text-blue-600"
-                                            }`}
+                                        <Button
+                                            className={`w-full py-6 rounded-xl font-bold uppercase tracking-widest transition-all ${plan.isPopular
+                                                    ? "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-900/40"
+                                                    : "border-2 hover:border-blue-600 hover:text-blue-600"
+                                                }`}
                                             variant={plan.isPopular ? "default" : "outline"}
                                         >
                                             {plan.price === 0 ? "Get Started" : "Subscribe Now"}

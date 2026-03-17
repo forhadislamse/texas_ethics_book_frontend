@@ -6,56 +6,73 @@ import { useGetAllPlansQuery } from "@/redux/api/planApi";
 import { Search, BookOpen, ShieldCheck, CreditCard, ChevronRight, BadgeCheck, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import BookCover from "@/src/assets/book-cover.png";
+import HeroBg from "@/src/assets/dark_legal_library_bg.png";
 
 export default function LandingPage() {
     const { data: plans, isLoading } = useGetAllPlansQuery(undefined);
     return (
         <div className="flex flex-col min-h-screen bg-white">
             {/* Hero Section */}
-            <section className="relative overflow-hidden pt-20 pb-20 lg:pt-32 lg:pb-32 bg-[#F8FAFC]">
-                <div className="container mx-auto px-6 relative z-10">
-                    <div className="flex flex-col lg:flex-row items-center gap-16">
-                        <div className="lg:w-1/2 text-left">
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.6 }}
-                            >
-                                <h1 className="text-5xl lg:text-7xl font-bold text-[#1E293B] font-outfit leading-tight mb-6">
-                                    Texas Ethics Laws — The Complete <span className="text-blue-600">Legal Practice Guide</span>
-                                </h1>
-                                <p className="text-xl text-gray-600 mb-10 leading-relaxed max-w-2xl">
-                                    Master over 550 pages of annotated ethics rules, statutes, and case law in one comprehensive, searchable digital volume. Built for the modern Texas practitioner.
-                                </p>
-                                <div className="flex flex-col sm:flex-row gap-4">
-                                    <Link href="/user/reader">
-                                        <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-7 rounded-xl text-lg font-bold transition-all shadow-lg hover:shadow-blue-200 uppercase">
-                                            PREVIEW THE GUIDE <ChevronRight className="ml-2" />
-                                        </Button>
-                                    </Link>
-                                    <Link href="/register">
-                                        <Button size="lg" variant="outline" className="border-2 border-gray-200 px-8 py-7 rounded-xl text-lg font-bold hover:bg-white hover:border-blue-600 hover:text-blue-600 transition-all uppercase">
-                                            START SUBSCRIPTION
-                                        </Button>
-                                    </Link>
-                                </div>
-                            </motion.div>
+            <section className="relative min-h-[600px] lg:min-h-[700px] flex items-center pt-24 pb-0 bg-[#0F172A] z-20">
+                {/* Background Image Wrapper */}
+                <div className="absolute inset-0 z-0 overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#0F172A] via-[#0F172A]/95 to-[#0F172A]/30 z-10"></div>
+                    <Image
+                        src={HeroBg.src}
+                        alt="Legal Library Background"
+                        fill
+                        className="object-cover opacity-50"
+                        priority
+                    />
+                </div>
+
+                <div className="container mx-auto px-6 relative z-20">
+                    <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-16">
+                        <div className="lg:w-1/2 text-left flex flex-col justify-center">
+                            <h1 className="text-4xl lg:text-5xl font-bold text-white font-outfit leading-tight mb-6 uppercase tracking-tight">
+                                Texas Ethics Laws — <br className="hidden lg:block" />
+                                <span className="text-white">The Complete Legal Practice Guide</span>
+                            </h1>
+                            <p className="text-lg text-gray-300 mb-10 leading-relaxed max-w-xl font-light italic">
+                                Master over 550 pages of annotated ethics rules, statutes, and case law in one comprehensive, searchable digital volume. Built for the modern Texas practitioner.
+                            </p>
+                            <div className="flex flex-wrap gap-4">
+                                <Link href="/register">
+                                    <Button size="lg" className="bg-[#0D7C84] hover:bg-[#0B656B] text-white px-8 py-7 rounded-full text-lg font-bold transition-all shadow-xl hover:shadow-[#0D7C84]/40 uppercase tracking-widest">
+                                        Start Subscription
+                                    </Button>
+                                </Link>
+                                <Link href="/user/reader">
+                                    <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-[#0F172A] bg-transparent px-8 py-7 rounded-full text-lg font-bold transition-all uppercase tracking-widest">
+                                        Preview the Guide
+                                    </Button>
+                                </Link>
+                            </div>
                         </div>
-                        <div className="lg:w-1/2 relative">
-                            <div className="absolute inset-0 bg-blue-100 rounded-full blur-3xl opacity-30 transform -rotate-12 translate-x-12 translate-y-12"></div>
-                            <div className="relative bg-white p-2 rounded-3xl shadow-2xl border border-gray-100">
-                                <div className="bg-[#1E293B] h-[500px] w-full rounded-2xl flex items-center justify-center p-12 text-center text-white">
-                                    <div>
-                                        <h3 className="text-4xl font-bold font-outfit uppercase tracking-widest mb-4">Texas Ethics Laws</h3>
-                                        <div className="h-1 w-20 bg-blue-500 mx-auto mb-8"></div>
-                                        <p className="text-xl font-light italic">9th Edition — 10.23</p>
-                                    </div>
-                                </div>
+                        
+                        <div className="lg:w-1/2 relative flex justify-end items-center mt-12 lg:mt-0">
+                            {/* Natural Shadow Effect */}
+                            <div className="absolute -bottom-16 right-0 w-full h-32 bg-black/90 blur-[100px] rounded-full opacity-80 z-0"></div>
+                            
+                            {/* Massive Book Cover with Proper Overlap into white section */}
+                            <div className="relative -mb-48 lg:-mb-80 z-30">
+                                <Image
+                                    src={BookCover.src}
+                                    alt="Texas Ethics Laws Book Cover"
+                                    width={600}
+                                    height={800}
+                                    className="w-full max-w-[450px] lg:max-w-[550px] h-auto drop-shadow-[0_40px_40px_rgba(0,0,0,0.6)]"
+                                    priority
+                                />
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
+
+            {/* Tight spacer for a clean overlap look */}
+            <div className="h-24 lg:h-40 bg-white"></div>
 
             {/* Features Section */}
             <section className="py-24 bg-white">

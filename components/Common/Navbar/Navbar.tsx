@@ -70,7 +70,7 @@ export default function Navbar() {
             <div className="shrink-0 transition-transform duration-200 hover:scale-105">
               <Link href="/">
                 <Image
-                  src="/logo1.png"
+                  src="/logo2.png"
                   alt="Logo"
                   width={100}
                   height={100}
@@ -122,7 +122,7 @@ export default function Navbar() {
         {/* Sidebar Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200/50">
           <Image
-            src="/logo1.png"
+            src="/logo2.png"
             alt="Logo"
             width={100}
             height={100}

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Twitter, Linkedin, Phone, User } from "lucide-react";
-import Logo from "@/src/assets/logo1.png";
+import Logo from "@/src/assets/logo2.png";
 import { Button } from "@/components/ui/button";
 
 const Navbar = () => {

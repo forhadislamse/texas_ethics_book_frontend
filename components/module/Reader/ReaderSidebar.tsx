@@ -54,7 +54,7 @@ export default function ReaderSidebar() {
             <div className="p-6 flex items-center justify-between border-b border-gray-50">
                 <Link href="/" className="flex items-center gap-3">
                     <div className="bg-[#0f172a] p-1.5 rounded-lg">
-                        <Image src="/Logo.png" alt="Cates Logo" width={24} height={24} className="brightness-200" />
+                        <Image src="/logo1.png" alt="Cates Logo" width={24} height={24} className="brightness-200" />
                     </div>
                     <div>
                         <span className="font-bold text-[#0F172A] text-lg tracking-tight block leading-none">CATES</span>
@@ -146,7 +146,7 @@ export default function ReaderSidebar() {
             <div className="p-4 border-t border-gray-50 bg-[#F8FAFC]">
                 <div className="flex items-center gap-3 p-2 group cursor-pointer hover:bg-white hover:shadow-sm rounded-xl transition-all">
                     <div className="w-10 h-10 rounded-full border-2 border-white shadow-sm overflow-hidden flex items-center justify-center bg-white relative">
-                         <Image src="/Logo.png" alt="User" width={40} height={40} className="object-cover scale-110 opacity-80" />
+                         <Image src="/logo1.png" alt="User" width={40} height={40} className="object-cover scale-110 opacity-80" />
                          <div className="absolute inset-0 bg-blue-600/10" />
                     </div>
                     <div className="flex-1 min-w-0">

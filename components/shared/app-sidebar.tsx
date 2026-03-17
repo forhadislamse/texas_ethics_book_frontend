@@ -6,7 +6,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import Logo from "@/src/assets/logo.png";
+import Logo from "@/src/assets/logo1.png";
 import {
   HandCoins,
   Home,

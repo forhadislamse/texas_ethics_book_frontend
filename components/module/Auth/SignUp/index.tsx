@@ -82,7 +82,7 @@ export default function RegistrationForm() {
       <div className="w-full max-w-6xl flex flex-col md:flex-row gap-8 items-center">
         <div className="w-full md:w-1/2 bg-[#0a1628] rounded-3xl p-12 flex items-center justify-center lg:min-h-[600px]">
           <Image
-            src="/Logo.png"
+            src="/logo1.png"
             alt="Logo"
             className="w-48 h-auto object-contain"
             width={500}

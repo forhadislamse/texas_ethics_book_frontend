@@ -76,7 +76,7 @@ const LoginPage = () => {
       <div className="flex w-full max-w-6xl items-center gap-28 px-4">
         <div className="hidden md:flex flex-1 items-center justify-center bg-[#0c1421] rounded-lg min-h-[90vh]">
           <Image
-            src="/Logo.png"
+            src="/logo1.png"
             alt="BPC Logo"
             width={420}
             height={420}
@@ -88,7 +88,7 @@ const LoginPage = () => {
         <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-md">
           <Link href="/">
             <Image
-              src="/Logo.png"
+              src="/logo1.png"
               alt="BPC Logo"
               width={150}
               height={50}

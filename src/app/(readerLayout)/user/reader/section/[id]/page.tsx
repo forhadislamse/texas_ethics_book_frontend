@@ -162,7 +162,7 @@ export default function SectionDetailsPage() {
                     
                     <div className="flex flex-wrap items-center gap-4">
                         <div className="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-blue-500/20">
-                            Sec. {section.chapter?.number}.{section.number}
+                            Sec. {section.number}
                         </div>
                         <div className="flex items-center gap-2 text-xs text-gray-400 font-bold bg-gray-50 px-3 py-1 rounded-full border border-gray-100">
                             <Clock size={12} className="text-gray-300" />

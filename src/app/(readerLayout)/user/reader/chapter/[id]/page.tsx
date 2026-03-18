@@ -95,7 +95,7 @@ export default function ChapterDetailsPage() {
                         >
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 mb-2 font-black text-[10px] tracking-widest text-blue-600 uppercase">
-                                    <span>Sec. {number}.{section.number}</span>
+                                    <span>Sec. {section.number}</span>
                                     <div className="w-1 h-1 rounded-full bg-blue-200" />
                                     <span className="text-gray-400 font-bold">Entry ID: {section.id.substring(0,6)}</span>
                                 </div>

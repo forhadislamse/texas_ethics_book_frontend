@@ -12,7 +12,8 @@ import {
     Clock,
     ChevronLeft,
     ExternalLink,
-    BookOpen
+    BookOpen,
+    Layers
 } from "lucide-react";
 import {
     Popover,
@@ -249,6 +250,30 @@ export default function SectionDetailsPage() {
                             </div>
                             <div className="p-10 text-gray-800 leading-relaxed text-lg whitespace-pre-wrap font-serif">
                                 {section.caseLaw}
+                            </div>
+                        </div>
+                    )}
+
+                    {section.agOpinions && (
+                        <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm">
+                            <div className="bg-indigo-900 px-8 py-4 flex items-center gap-3 text-white font-bold text-xs tracking-[0.15em] uppercase">
+                                <Scale size={16} className="text-indigo-400" />
+                                AG Opinions
+                            </div>
+                            <div className="p-10 text-gray-800 leading-relaxed text-lg whitespace-pre-wrap font-serif">
+                                {section.agOpinions}
+                            </div>
+                        </div>
+                    )}
+
+                    {section.crossReferences && (
+                        <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm">
+                            <div className="bg-gray-100 px-8 py-4 flex items-center gap-3 text-gray-900 font-bold text-xs tracking-[0.15em] uppercase">
+                                <Layers size={16} className="text-gray-500" />
+                                Cross References
+                            </div>
+                            <div className="p-10 text-gray-700 leading-relaxed text-lg whitespace-pre-wrap">
+                                {section.crossReferences}
                             </div>
                         </div>
                     )}

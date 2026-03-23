@@ -11,7 +11,7 @@ export default function ReaderLayout({
         <div className="flex bg-white min-h-screen">
             <ReaderSidebar />
             <main className="flex-1 ml-80 min-h-screen bg-white">
-                <div className="max-w-5xl mx-auto px-8 py-12">
+                <div>
                     {children}
                 </div>
             </main>

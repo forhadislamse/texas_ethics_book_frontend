@@ -8,9 +8,10 @@ import {
     BookOpen, 
     Lock, 
     ChevronLeft, 
-    ArrowRight,
     Search,
-    BookMarked
+    BookMarked,
+    Info,
+    List
 } from "lucide-react";
 
 export default function ChapterDetailsPage() {
@@ -19,22 +20,22 @@ export default function ChapterDetailsPage() {
     const { data: chapter, isLoading } = useGetChapterByIdQuery(id);
 
     if (isLoading) {
-        return <div className="animate-pulse space-y-12 max-w-5xl mx-auto">
-            <div className="h-6 bg-gray-50 rounded w-1/4"></div>
-            <div className="space-y-4">
-                <div className="h-16 bg-gray-50 rounded w-3/4"></div>
-                <div className="h-6 bg-gray-50 rounded w-1/2"></div>
+        return <div className="animate-pulse wiki-doc-container">
+            <div className="wiki-sidebar space-y-4">
+                {[1,2,3,4,5].map(i => <div key={i} className="h-4 bg-gray-100 rounded w-full"></div>)}
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-12">
-                {[1, 2, 3, 4, 5, 6].map(i => (
-                    <div key={i} className="h-24 bg-gray-50/50 rounded-2xl border border-gray-100"></div>
-                ))}
+            <div className="wiki-main-content space-y-12">
+                <div className="h-6 bg-gray-50 rounded w-1/4"></div>
+                <div className="space-y-4">
+                    <div className="h-16 bg-gray-50 rounded w-3/4"></div>
+                    <div className="h-[200px] bg-gray-50/50 rounded-2xl border border-gray-100"></div>
+                </div>
             </div>
         </div>;
     }
 
     if (!chapter?.data) {
-        return <div className="text-center py-20 bg-gray-50 rounded-[2.5rem] border border-dashed border-gray-200 max-w-2xl mx-auto mt-20">
+        return <div className="text-center py-20 max-w-2xl mx-auto mt-20">
             <BookMarked className="mx-auto h-12 w-12 text-gray-300 mb-4" />
             <h2 className="text-xl font-bold text-gray-900 mb-2">Chapter Not Found</h2>
             <Link href="/user/reader" className="text-blue-600 font-bold hover:underline">Return to Guide</Link>
@@ -43,7 +44,6 @@ export default function ChapterDetailsPage() {
 
     const { number, title, sections, isLocked, code, titleLevel, subtitleLevel } = chapter.data;
 
-    // Grouping sections by subchapter
     const sectionsBySubchapter = sections?.reduce((acc: any, section: any) => {
         const sub = section.subChapter || "_NONE_";
         if (!acc[sub]) acc[sub] = [];
@@ -52,131 +52,143 @@ export default function ChapterDetailsPage() {
     }, {});
 
     return (
-        <div className="space-y-16 pb-20 max-w-5xl mx-auto animate-in fade-in duration-500">
-            <header className="space-y-10">
-                <nav className="flex items-center gap-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50 pb-6">
-                    <Link href="/user/reader" className="hover:text-blue-600 transition-colors">Digital Library</Link>
-                    <ChevronRight size={12} className="opacity-30" />
-                    <span className="text-gray-900">Chapter {number}</span>
-                </nav>
-
-                <div className="space-y-6">
-                    <div className="flex flex-wrap items-center gap-4">
-                        {code && (
-                            <div className="bg-[#0F172A] text-white px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-[0.25em] shadow-xl shadow-gray-200 border border-gray-800">
-                                {code}
-                            </div>
-                        )}
-                        <div className="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-[0.25em] shadow-xl shadow-blue-100">
-                            Chapter {number}
-                        </div>
-                        {isLocked && (
-                            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-600 rounded-lg text-[10px] font-black border border-amber-100 uppercase tracking-widest leading-none">
-                                <Lock size={12} strokeWidth={3} />
-                                Subscription Required
-                            </div>
-                        )}
+        <div className="wiki-doc-container animate-in fade-in duration-700">
+            {/* Wikipedia-Style Sidebar (TOC) */}
+            <aside className="wiki-sidebar">
+                <div className="wiki-sticky-sidebar custom-scrollbar">
+                    <div className="flex items-center gap-2 mb-6 px-2">
+                        <List size={16} className="text-gray-400" />
+                        <h5 className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Contents</h5>
                     </div>
-
-                    <div className="space-y-4">
-                        {(titleLevel || subtitleLevel) && (
-                             <div className="space-y-1">
-                                {titleLevel && <p className="text-[11px] font-black text-gray-400 uppercase tracking-[0.3em] leading-none">{titleLevel}</p>}
-                                {subtitleLevel && <p className="text-[10px] font-bold text-blue-500/70 uppercase tracking-[0.2em] leading-none">{subtitleLevel}</p>}
-                             </div>
-                        )}
-                        <h1 className="text-4xl md:text-7xl font-black text-[#0F172A] leading-[1.05] tracking-tight">
-                            {title}
-                        </h1>
-                    </div>
-                    
-                    <p className="text-lg text-gray-500 font-medium max-w-3xl leading-relaxed">
-                        Navigate through the sections below to explore full laws, professional annotations, and regulatory guidance for this volume.
-                    </p>
-                </div>
-            </header>
-
-            <section className="space-y-16">
-                <div className="flex items-center justify-between border-b border-gray-100 pb-6">
-                    <h3 className="text-xs font-black text-gray-400 uppercase tracking-[0.4em] flex items-center gap-3">
-                        <span className="w-8 h-px bg-gray-200" />
-                        Table of Contents
-                    </h3>
-                    <div className="text-[10px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-3 py-1 rounded-full">
-                        {sections?.length || 0} Entries available
-                    </div>
-                </div>
-
-                {sectionsBySubchapter && Object.entries(sectionsBySubchapter).map(([subTitle, subSections]: [string, any]) => (
-                    <div key={subTitle} className="space-y-8">
-                        {subTitle !== "_NONE_" && (
-                            <div className="flex items-center gap-4">
-                                <div className="h-px flex-1 bg-gray-100" />
-                                <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] whitespace-nowrap bg-gray-50 px-4 py-2 rounded-full border border-gray-100">
-                                    {subTitle}
-                                </h4>
-                                <div className="h-px flex-1 bg-gray-100" />
-                            </div>
-                        )}
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {subSections.map((section: any) => (
-                                <Link
-                                    key={section.id}
-                                    href={`/user/reader/section/${section.id}`}
-                                    className="group relative flex items-start gap-4 p-6 rounded-2xl bg-white border border-gray-100 hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300"
-                                >
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2 mb-2 font-black text-[10px] tracking-widest text-blue-600 uppercase">
-                                            <span>Sec. {section.number}</span>
-                                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500/10" />
-                                            <span className="text-gray-400 font-bold">Entry ID: {section.id.substring(0,6)}</span>
-                                        </div>
-                                        <h4 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight">
+                    <nav className="space-y-1">
+                        {sectionsBySubchapter && Object.entries(sectionsBySubchapter).map(([subTitle, subSections]: [string, any]) => (
+                            <div key={subTitle} className="mb-6">
+                                {subTitle !== "_NONE_" && (
+                                    <div className="px-2 py-1 text-[10px] font-bold text-gray-400 uppercase tracking-wider truncate mb-2">
+                                        {subTitle}
+                                    </div>
+                                )}
+                                <div className="space-y-0.5 border-l border-gray-100 ml-2">
+                                    {subSections.map((section: any) => (
+                                        <a
+                                            key={section.id}
+                                            href={`#section-${section.number}`}
+                                            className="block px-4 py-1.5 text-[13px] text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all truncate border-l-2 border-transparent hover:border-blue-500 -ml-px"
+                                        >
+                                            <span className="font-bold mr-2 text-[11px] text-gray-400">§ {section.number}</span>
                                             {section.title}
-                                        </h4>
-                                    </div>
-                                    <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-300 group-hover:bg-blue-600 group-hover:text-white transition-all transform group-hover:translate-x-1">
-                                        <ChevronRight size={20} />
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-                ))}
-                
-                {(!sections || sections.length === 0) && (
-                    <div className="text-center py-20 bg-gray-50/50 rounded-3xl border border-dashed border-gray-100">
-                        <p className="text-gray-400 text-sm font-bold uppercase tracking-widest">No sections available in this chapter yet.</p>
-                    </div>
-                )}
-            </section>
-
-            <footer className="pt-20">
-                <div className="flex flex-col md:flex-row justify-between items-center gap-8 border-t border-gray-100 pt-10">
-                    <Link
-                        href={`/user/reader`}
-                        className="group flex items-center gap-4 text-xs font-black text-[#0F172A] tracking-[0.2em] uppercase hover:text-blue-600 transition-all"
-                    >
-                        <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors">
-                            <ChevronLeft size={18} className="transition-transform group-hover:-translate-x-1" />
-                        </div>
-                        Back to Library
-                    </Link>
-
-                    <div className="hidden md:flex items-center gap-6">
-                         <div className="flex items-center gap-2 text-[10px] font-black text-gray-300 uppercase tracking-widest">
-                             <Search size={14} />
-                             Dynamic Search Active
-                         </div>
-                         <div className="w-px h-4 bg-gray-100" />
-                         <div className="flex items-center gap-2 text-[10px] font-black text-gray-300 uppercase tracking-widest">
-                             <BookOpen size={14} />
-                             Premium Collection
-                         </div>
-                    </div>
+                                        </a>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </nav>
                 </div>
-            </footer>
+            </aside>
+
+            {/* Main Content */}
+            <main className="wiki-main-content">
+                <header className="mb-12">
+                    <nav className="flex items-center gap-2 text-xs font-bold text-gray-400 mb-8 pb-4 border-b border-gray-50">
+                        <Link href="/user/reader" className="hover:text-blue-600">Digital Library</Link>
+                        <ChevronRight size={14} className="opacity-30" />
+                        <span className="text-gray-900">Chapter {number}</span>
+                    </nav>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                        <div className="lg:col-span-2 space-y-6">
+                            <h1 className="text-4xl md:text-5xl font-black text-[#0F172A] leading-tight">
+                                <span className="block text-blue-600 text-sm font-black uppercase tracking-[0.3em] mb-4">Chapter {number}</span>
+                                {title}
+                            </h1>
+                            <p className="text-lg text-gray-500 leading-relaxed font-serif italic">
+                                Technical guidelines and regulatory frameworks regarding {title.toLowerCase()}.
+                            </p>
+                        </div>
+
+                        {/* Wikipedia-Style Infobox */}
+                        <div className="wiki-infobox bg-white shadow-sm border-t-4 border-t-blue-600">
+                             <div className="flex items-center gap-2 mb-4">
+                                <Info size={16} className="text-blue-600" />
+                                <span className="font-black text-[10px] uppercase tracking-widest text-gray-400">Chapter Metadata</span>
+                             </div>
+                             <div className="space-y-3">
+                                <div className="grid grid-cols-2 py-2 border-b border-gray-50">
+                                    <span className="text-[10px] uppercase font-bold text-gray-400">Code</span>
+                                    <span className="font-black text-[#0F172A] text-right">{code || "N/A"}</span>
+                                </div>
+                                <div className="space-y-1">
+                                    <span className="text-[10px] uppercase font-bold text-gray-400">Hierarchical Level</span>
+                                    <p className="text-[11px] font-black leading-tight grey-900">{titleLevel || "N/A"}</p>
+                                    <p className="text-[10px] font-bold text-blue-500 leading-tight">{subtitleLevel || ""}</p>
+                                </div>
+                                <div className="grid grid-cols-2 py-2 border-t border-gray-50">
+                                    <span className="text-[10px] uppercase font-bold text-gray-400">Access</span>
+                                    <span className="text-right">
+                                        {isLocked ? 
+                                            <span className="inline-flex items-center gap-1 text-[10px] font-black text-amber-500 uppercase"><Lock size={10} /> Limited</span> : 
+                                            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest leading-none">Open Access</span>
+                                        }
+                                    </span>
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+                </header>
+
+                <div className="space-y-20">
+                    {sectionsBySubchapter && Object.entries(sectionsBySubchapter).map(([subTitle, subSections]: [string, any]) => (
+                        <section key={subTitle} className="space-y-8">
+                            {subTitle !== "_NONE_" && (
+                                <h2 className="wiki-subchapter-heading flex items-center gap-4">
+                                    {subTitle}
+                                    <div className="h-px flex-1 bg-gray-100" />
+                                </h2>
+                            )}
+
+                            <div className="divide-y divide-gray-100 border-t border-gray-100">
+                                {subSections.map((section: any) => (
+                                    <div 
+                                        key={section.id} 
+                                        id={`section-${section.number}`}
+                                        className="py-10 group scroll-mt-24"
+                                    >
+                                        <div className="flex flex-col md:flex-row md:items-start gap-4 md:gap-12">
+                                            <div className="w-24 shrink-0 pt-2 font-black text-[11px] text-blue-600 uppercase tracking-[0.2em]">
+                                                § {section.number}
+                                            </div>
+                                            <div className="flex-1 space-y-4">
+                                                <h3 className="text-2xl font-bold text-gray-900 group-hover:text-blue-700 transition-colors">
+                                                    {section.title}
+                                                </h3>
+                                                <p className="text-gray-500 text-sm leading-relaxed line-clamp-3 font-serif">
+                                                    {section.content}
+                                                </p>
+                                                <Link 
+                                                    href={`/user/reader/section/${section.id}`}
+                                                    className="inline-flex items-center gap-2 text-[10px] font-black text-blue-600 uppercase tracking-widest hover:gap-4 transition-all"
+                                                >
+                                                    Full Documentation <ChevronRight size={14} />
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+                    ))}
+                </div>
+
+                <footer className="mt-24 pt-12 border-t border-gray-100 flex justify-between items-center text-gray-400">
+                    <Link href="/user/reader" className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest hover:text-blue-600 transition-colors">
+                        <ChevronLeft size={16} /> Back to Library
+                    </Link>
+                    <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest">
+                        <BookOpen size={14} /> 
+                        <span>Updated March 2026 Edition</span>
+                    </div>
+                </footer>
+            </main>
         </div>
     );
 }

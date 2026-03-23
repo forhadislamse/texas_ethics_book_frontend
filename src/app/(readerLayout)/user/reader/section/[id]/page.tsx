@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useGetSectionByIdQuery } from "@/redux/api/guideApi";
@@ -13,16 +12,17 @@ import {
     ChevronLeft,
     ExternalLink,
     BookOpen,
-    Layers
+    Layers,
+    Anchor,
+    FileText
 } from "lucide-react";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
 
-// Helper component to render content with interactive references
+// Enhanced helper to render content with interactive references and semantic indentation
 const FormattedContent = ({ content, internalRefs, externalRefs }: { 
     content: string, 
     internalRefs: any[], 
@@ -30,85 +30,104 @@ const FormattedContent = ({ content, internalRefs, externalRefs }: {
 }) => {
     if (!content) return null;
 
-    let elements: (string | React.ReactNode)[] = [content];
+    // First, split content into paragraphs/lines to handle indentation
+    const lines = content.split('\n');
+    
+    return (
+        <div className="space-y-4">
+            {lines.map((line, lineIdx) => {
+                if (!line.trim()) return null;
 
-    // Handle Internal References (Popups)
-    internalRefs?.forEach((ref) => {
-        const newElements: (string | React.ReactNode)[] = [];
-        elements.forEach((el) => {
-            if (typeof el !== 'string') {
-                newElements.push(el);
-                return;
-            }
+                // Detect indentation level based on patterns: (a), (1), (A), (i)
+                let indentClass = "";
+                if (line.match(/^\s*\([a-z]\)/i)) indentClass = "wiki-indent-1";
+                else if (line.match(/^\s*\(\d+\)/)) indentClass = "wiki-indent-2";
+                else if (line.match(/^\s*\([A-Z]\)/)) indentClass = "wiki-indent-3";
+                else if (line.match(/^\s*\([ivx]+\)/i)) indentClass = "pl-32"; // deeper
 
-            const parts = el.split(new RegExp(`(${ref.linkText})`, 'g'));
-            parts.forEach((part, i) => {
-                if (part === ref.linkText) {
-                    newElements.push(
-                        <Popover key={`${ref.id}-${i}`}>
-                            <PopoverTrigger asChild>
-                                <button className="text-blue-600 font-semibold hover:underline cursor-pointer decoration-blue-200 underline-offset-4 decoration-2">
-                                    {part}
-                                </button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-80 p-0 overflow-hidden border-none shadow-2xl rounded-2xl animate-in zoom-in-95 duration-200">
-                                <div className="bg-[#0F172A] p-4">
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <BookOpen className="w-3.5 h-3.5 text-blue-400" />
-                                        <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Internal Reference</span>
-                                    </div>
-                                    <h4 className="text-sm font-bold text-white leading-tight">{ref.popupTitle}</h4>
-                                </div>
-                                <div className="p-4 bg-white text-xs leading-relaxed text-gray-600 italic">
-                                    &quot;{ref.popupExcerpt}&quot;
-                                </div>
-                                <div className="p-3 bg-gray-50 border-t border-gray-100 flex justify-end">
-                                     <button className="text-[10px] font-bold text-blue-600 hover:text-blue-700 transition-colors uppercase tracking-wider">View Full Rule</button>
-                                </div>
-                            </PopoverContent>
-                        </Popover>
-                    );
-                } else {
-                    if (part) newElements.push(part);
-                }
-            });
-        });
-        elements = newElements;
-    });
+                let elements: (string | React.ReactNode)[] = [line];
 
-    // Handle External References (Links)
-    externalRefs?.forEach((ref) => {
-        const newElements: (string | React.ReactNode)[] = [];
-        elements.forEach((el) => {
-            if (typeof el !== 'string') {
-                newElements.push(el);
-                return;
-            }
+                // Handle Internal References (Popups)
+                internalRefs?.forEach((ref) => {
+                    const newElements: (string | React.ReactNode)[] = [];
+                    elements.forEach((el) => {
+                        if (typeof el !== 'string') {
+                            newElements.push(el);
+                            return;
+                        }
 
-            const parts = el.split(new RegExp(`(${ref.linkText})`, 'g'));
-            parts.forEach((part, i) => {
-                if (part === ref.linkText) {
-                    newElements.push(
-                        <a 
-                            key={`${ref.id}-${i}`}
-                            href={ref.url} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="text-blue-700 font-medium inline-flex items-center gap-1 hover:underline decoration-blue-200 underline-offset-4"
-                        >
-                            {part}
-                            <ExternalLink className="w-3 h-3 opacity-40 group-hover:opacity-100 transition-opacity" />
-                        </a>
-                    );
-                } else {
-                    if (part) newElements.push(part);
-                }
-            });
-        });
-        elements = newElements;
-    });
+                        const parts = el.split(new RegExp(`(${ref.linkText})`, 'g'));
+                        parts.forEach((part, i) => {
+                            if (part === ref.linkText) {
+                                newElements.push(
+                                    <Popover key={`${ref.id}-${lineIdx}-${i}`}>
+                                        <PopoverTrigger asChild>
+                                            <button className="text-blue-600 font-bold hover:underline cursor-pointer decoration-blue-200 underline-offset-4">
+                                                {part}
+                                            </button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-80 p-0 overflow-hidden border-none shadow-2xl rounded-2xl">
+                                            <div className="bg-[#0F172A] p-4">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <BookOpen className="w-3.5 h-3.5 text-blue-400" />
+                                                    <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Internal Reference</span>
+                                                </div>
+                                                <h4 className="text-sm font-bold text-white leading-tight">{ref.popupTitle}</h4>
+                                            </div>
+                                            <div className="p-4 bg-white text-xs leading-relaxed text-gray-600 italic">
+                                                &quot;{ref.popupExcerpt}&quot;
+                                            </div>
+                                        </PopoverContent>
+                                    </Popover>
+                                );
+                            } else {
+                                if (part) newElements.push(part);
+                            }
+                        });
+                    });
+                    elements = newElements;
+                });
 
-    return <>{elements}</>;
+                // Handle External References (Links)
+                externalRefs?.forEach((ref) => {
+                    const newElements: (string | React.ReactNode)[] = [];
+                    elements.forEach((el) => {
+                        if (typeof el !== 'string') {
+                            newElements.push(el);
+                            return;
+                        }
+
+                        const parts = el.split(new RegExp(`(${ref.linkText})`, 'g'));
+                        parts.forEach((part, i) => {
+                            if (part === ref.linkText) {
+                                newElements.push(
+                                    <a 
+                                        key={`${ref.id}-${lineIdx}-${i}`}
+                                        href={ref.url} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer"
+                                        className="text-blue-700 font-medium inline-flex items-center gap-1 hover:underline"
+                                    >
+                                        {part}
+                                        <ExternalLink className="w-3 h-3 opacity-40 shrink-0" />
+                                    </a>
+                                );
+                            } else {
+                                if (part) newElements.push(part);
+                            }
+                        });
+                    });
+                    elements = newElements;
+                });
+
+                return (
+                    <p key={lineIdx} className={`${indentClass} wiki-legal-text`}>
+                        {elements}
+                    </p>
+                );
+            })}
+        </div>
+    );
 };
 
 export default function SectionDetailsPage() {
@@ -117,207 +136,169 @@ export default function SectionDetailsPage() {
     const { data: sectionResult, isLoading } = useGetSectionByIdQuery(id);
 
     if (isLoading) {
-        return <div className="animate-pulse space-y-12 max-w-4xl mx-auto">
-            <div className="h-6 bg-gray-50 rounded w-1/4"></div>
-            <div className="space-y-4">
-                <div className="h-12 bg-gray-50 rounded w-3/4"></div>
-                <div className="h-6 bg-gray-50 rounded w-1/2"></div>
+        return <div className="animate-pulse wiki-doc-container">
+            <div className="wiki-sidebar space-y-4">
+                {[1,2,3,4].map(i => <div key={i} className="h-4 bg-gray-100 rounded w-full"></div>)}
             </div>
-            <div className="h-[400px] bg-gray-50/50 rounded-3xl border border-gray-50"></div>
+            <div className="wiki-main-content space-y-12">
+                <div className="h-6 bg-gray-50 rounded w-1/4"></div>
+                <div className="h-[400px] bg-gray-50/50 rounded-3xl border border-gray-50"></div>
+            </div>
         </div>;
     }
 
     if (!sectionResult?.data) {
-        return <div className="text-center py-20 bg-gray-50 rounded-3xl border border-dashed border-gray-200 max-w-2xl mx-auto mt-20">
-            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-                <Info className="text-gray-300 w-8 h-8" />
-            </div>
+        return <div className="text-center py-20 max-w-2xl mx-auto mt-20">
+            <Info className="mx-auto h-12 w-12 text-gray-300 mb-4" />
             <h2 className="text-xl font-bold text-gray-900 mb-2">Section Not Found</h2>
-            <p className="text-gray-500 mb-6">The guide entry you are looking for might have been moved or updated.</p>
-            <Link href="/user/reader" className="px-6 py-2.5 bg-[#0F172A] text-white rounded-full text-sm font-bold hover:shadow-lg transition-all active:scale-95">
-                Return to Guide
-            </Link>
+            <Link href="/user/reader" className="text-blue-600 font-bold hover:underline">Return to Guide</Link>
         </div>;
     }
 
     const section = sectionResult.data;
 
     return (
-        <div className="space-y-12 pb-20 max-w-4xl mx-auto animate-in fade-in duration-500">
-            {/* Header / Breadcrumbs */}
-            <header className="space-y-8">
-                <nav className="flex items-center gap-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50 pb-6 whitespace-nowrap overflow-x-auto custom-scrollbar">
-                    <Link href="/user/reader" className="hover:text-blue-600 transition-colors shrink-0">Digital Guide</Link>
-                    <ChevronRight size={12} className="opacity-30 shrink-0" />
-                    <Link href={`/user/reader/chapter/${section.chapterId}`} className="hover:text-blue-600 transition-colors shrink-0">
-                        Chapter {section.chapter?.number}
-                    </Link>
-                    {section.subChapter && (
-                        <>
-                            <ChevronRight size={12} className="opacity-30 shrink-0" />
-                            <span className="text-gray-400 truncate max-w-[150px]">{section.subChapter}</span>
-                        </>
-                    )}
-                    <ChevronRight size={12} className="opacity-30 shrink-0" />
-                    <span className="text-gray-900 shrink-0">Section {section.number}</span>
-                </nav>
+        <div className="wiki-doc-container animate-in fade-in duration-700">
+            {/* Section Sidebar Navigation */}
+            <aside className="wiki-sidebar">
+                <div className="wiki-sticky-sidebar custom-scrollbar">
+                    <div className="flex items-center gap-2 mb-6 px-2">
+                        <Anchor size={16} className="text-gray-400" />
+                        <h5 className="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">In this section</h5>
+                    </div>
+                    <nav className="space-y-1 border-l border-gray-100 ml-2">
+                        <a href="#summary" className="block px-4 py-2 text-[13px] text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all border-l-2 border-transparent hover:border-blue-500 -ml-px">Summary</a>
+                        <a href="#content" className="block px-4 py-2 text-[13px] text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all border-l-2 border-transparent hover:border-blue-500 -ml-px">Content Body</a>
+                        {section.practiceNotes && <a href="#practice-notes" className="block px-4 py-2 text-[13px] text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all border-l-2 border-transparent hover:border-blue-500 -ml-px">Practice Notes</a>}
+                        {section.ethicsOpinions && <a href="#ethics-opinions" className="block px-4 py-2 text-[13px] text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all border-l-2 border-transparent hover:border-blue-500 -ml-px">Ethics Opinions</a>}
+                        {section.caseLaw && <a href="#case-law" className="block px-4 py-2 text-[13px] text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all border-l-2 border-transparent hover:border-blue-500 -ml-px">Case Law</a>}
+                        {section.agOpinions && <a href="#ag-opinions" className="block px-4 py-2 text-[13px] text-gray-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all border-l-2 border-transparent hover:border-blue-500 -ml-px">AG Opinions</a>}
+                    </nav>
+                </div>
+            </aside>
 
-                <div className="space-y-6">
-                    <div className="flex flex-wrap items-center gap-4">
-                        {section.chapter?.code && (
-                            <div className="bg-[#0F172A] text-white px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-gray-200 border border-gray-800">
-                                {section.chapter.code}
-                            </div>
-                        )}
-                        <div className="bg-blue-600 text-white px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-blue-500/20">
-                            Chapter {section.chapter?.number}
+            {/* Main Content */}
+            <main className="wiki-main-content">
+                <header id="summary" className="mb-12 scroll-mt-24">
+                    <nav className="flex items-center gap-2 text-xs font-bold text-gray-400 mb-8 pb-4 border-b border-gray-50">
+                        <Link href="/user/reader" className="hover:text-blue-600">Digital Library</Link>
+                        <ChevronRight size={14} className="opacity-30" />
+                        <Link href={`/user/reader/chapter/${section.chapterId}`} className="hover:text-blue-600">Chapter {section.chapter?.number}</Link>
+                        <ChevronRight size={14} className="opacity-30" />
+                        <span className="text-gray-900">Section {section.number}</span>
+                    </nav>
+
+                    <div className="space-y-6">
+                        <div className="flex items-center gap-3">
+                            <span className="px-3 py-1 bg-[#0F172A] text-white text-[10px] font-black uppercase tracking-widest rounded shadow-sm">
+                                {section.chapter?.code || "GOV CODE"}
+                            </span>
+                            <span className="px-3 py-1 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest rounded shadow-sm">
+                                SEC. {section.number}
+                            </span>
+                        </div>
+                        <h1 className="text-4xl md:text-5xl font-black text-[#0F172A] tracking-tight leading-tight">
+                            {section.title}
+                        </h1>
+                        <div className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest">
+                            <Clock size={14} />
+                            <span>Effective March 2026</span>
+                            <div className="w-1 h-1 bg-gray-200 rounded-full" />
+                            <FileText size={14} />
+                            <span>Verified Documentation</span>
                         </div>
                     </div>
+                </header>
 
-                    <div className="space-y-4">
-                        {(section.chapter?.titleLevel || section.chapter?.subtitleLevel) && (
-                             <div className="space-y-1">
-                                {section.chapter.titleLevel && <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] leading-none">{section.chapter.titleLevel}</p>}
-                                {section.chapter.subtitleLevel && <p className="text-[9px] font-bold text-blue-500/70 uppercase tracking-[0.2em] leading-none">{section.chapter.subtitleLevel}</p>}
-                             </div>
-                        )}
-                        <h1 className="text-3xl md:text-5xl font-black text-[#0F172A] tracking-tight leading-[1.05]">
-                            {section.chapter?.title}
-                        </h1>
-                    </div>
-                </div>
-
-                <h2 className="text-2xl font-bold text-gray-800 leading-tight border-l-4 border-[#0F172A] pl-5 py-1">
-                    {section.title}
-                </h2>
-            </header>
-
-            {/* Content Area */}
-            <article className="relative">
-                <div className="absolute -left-20 top-0 hidden xl:block">
-                     <div className="sticky top-12 space-y-4">
-                         <div className="w-10 h-10 rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center text-gray-400 hover:text-blue-600 cursor-pointer transition-colors">
-                            <Info size={18} />
-                         </div>
-                         <div className="w-10 h-10 rounded-full bg-white shadow-sm border border-gray-100 flex items-center justify-center text-gray-400 hover:text-blue-600 cursor-pointer transition-colors">
-                            <Gavel size={18} />
-                         </div>
-                     </div>
-                </div>
-                
-                <div className="text-xl leading-[1.8] text-gray-800 font-serif bg-white p-10 md:p-14 rounded-[2.5rem] border border-gray-100 shadow-[0_20px_50px_rgba(0,0,0,0.02)] relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-gray-50 rounded-bl-full -mr-16 -mt-16 opacity-50" />
-                    <div className="relative z-10 whitespace-pre-wrap">
+                <div id="content" className="scroll-mt-24 space-y-12">
+                    <div className="wiki-legal-text p-2 first-letter:text-5xl first-letter:font-black first-letter:mr-3 first-letter:float-left first-letter:text-blue-600">
                         <FormattedContent 
                             content={section.content} 
                             internalRefs={section.internalRefs} 
                             externalRefs={section.externalRefs} 
                         />
                     </div>
+
+                    {section.addedBy && (
+                        <p className="text-xs text-gray-400 font-bold italic border-l-2 border-gray-100 pl-4 py-1 uppercase tracking-widest">
+                            Legislative/Regulatory Source: {section.addedBy}
+                        </p>
+                    )}
                 </div>
 
-                {section.addedBy && (
-                    <div className="flex items-center gap-3 text-xs text-gray-400 font-bold uppercase tracking-widest mt-8 px-6 bg-gray-50/50 py-3 rounded-2xl w-fit">
-                        <Info size={14} className="text-gray-300" />
-                        <span>Regulatory Source: {section.addedBy}</span>
-                    </div>
-                )}
-            </article>
-
-            {/* Legal Annotations / Practice Notes */}
-            <section className="space-y-12 pt-16 border-t border-gray-100">
-                <div className="flex items-center gap-4">
-                    <div className="h-px bg-gray-100 flex-1" />
-                    <h3 className="text-xs font-black text-gray-400 uppercase tracking-[0.4em] text-center">Legal Annotations</h3>
-                    <div className="h-px bg-gray-100 flex-1" />
-                </div>
-
-                <div className="grid grid-cols-1 gap-8">
+                {/* Wikipedia-Style Appendices */}
+                <section className="mt-20 pt-20 border-t border-gray-200 space-y-16">
                     {section.practiceNotes && (
-                        <div className="group bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1">
-                            <div className="bg-[#1E293B] px-8 py-4 flex items-center gap-3 text-white font-bold text-xs tracking-[0.15em] uppercase">
-                                <Info size={16} className="text-blue-400" />
+                        <div id="practice-notes" className="scroll-mt-24">
+                            <h3 className="wiki-section-heading flex items-center gap-3">
+                                <Info className="text-blue-600" size={20} />
                                 Practice Notes
-                            </div>
-                            <div className="p-10 text-gray-600 leading-relaxed text-lg font-medium italic whitespace-pre-wrap bg-linear-to-br from-white to-gray-50/50">
+                            </h3>
+                            <div className="wiki-legal-text italic text-gray-600 whitespace-pre-wrap">
                                 {section.practiceNotes}
                             </div>
                         </div>
                     )}
 
                     {section.ethicsOpinions && (
-                        <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm">
-                            <div className="bg-amber-600 px-8 py-4 flex items-center gap-3 text-white font-bold text-xs tracking-[0.15em] uppercase">
-                                <Scale size={16} className="text-amber-200" />
+                        <div id="ethics-opinions" className="scroll-mt-24">
+                            <h3 className="wiki-section-heading flex items-center gap-3">
+                                <Scale className="text-amber-600" size={20} />
                                 Ethics Opinions
-                            </div>
-                            <div className="p-10 text-gray-700 leading-relaxed text-lg whitespace-pre-wrap font-medium">
+                            </h3>
+                            <div className="wiki-legal-text whitespace-pre-wrap">
                                 {section.ethicsOpinions}
                             </div>
                         </div>
                     )}
 
                     {section.caseLaw && (
-                        <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm">
-                            <div className="bg-slate-900 px-8 py-4 flex items-center gap-3 text-white font-bold text-xs tracking-[0.15em] uppercase">
-                                <Gavel size={16} className="text-slate-400" />
+                        <div id="case-law" className="scroll-mt-24">
+                            <h3 className="wiki-section-heading flex items-center gap-3">
+                                <Gavel className="text-[#0F172A]" size={20} />
                                 Relevant Case Law
-                            </div>
-                            <div className="p-10 text-gray-800 leading-relaxed text-lg whitespace-pre-wrap font-serif">
+                            </h3>
+                            <div className="wiki-legal-text whitespace-pre-wrap font-serif">
                                 {section.caseLaw}
                             </div>
                         </div>
                     )}
 
                     {section.agOpinions && (
-                        <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm">
-                            <div className="bg-indigo-900 px-8 py-4 flex items-center gap-3 text-white font-bold text-xs tracking-[0.15em] uppercase">
-                                <Scale size={16} className="text-indigo-400" />
+                        <div id="ag-opinions" className="scroll-mt-24">
+                            <h3 className="wiki-section-heading flex items-center gap-3">
+                                <Scale className="text-indigo-600" size={20} />
                                 AG Opinions
-                            </div>
-                            <div className="p-10 text-gray-800 leading-relaxed text-lg whitespace-pre-wrap font-serif">
+                            </h3>
+                            <div className="wiki-legal-text whitespace-pre-wrap">
                                 {section.agOpinions}
                             </div>
                         </div>
                     )}
 
                     {section.crossReferences && (
-                        <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm">
-                            <div className="bg-gray-100 px-8 py-4 flex items-center gap-3 text-gray-900 font-bold text-xs tracking-[0.15em] uppercase">
-                                <Layers size={16} className="text-gray-500" />
+                        <div id="cross-references" className="scroll-mt-24">
+                            <h3 className="wiki-section-heading flex items-center gap-3">
+                                <Layers className="text-gray-400" size={20} />
                                 Cross References
-                            </div>
-                            <div className="p-10 text-gray-700 leading-relaxed text-lg whitespace-pre-wrap">
+                            </h3>
+                            <div className="wiki-legal-text whitespace-pre-wrap text-sm text-gray-500 italic">
                                 {section.crossReferences}
                             </div>
                         </div>
                     )}
-                </div>
-            </section>
+                </section>
 
-            {/* Navigation Footer */}
-            <footer className="pt-20">
-                <div className="flex flex-col md:flex-row justify-between items-center gap-8 border-t border-gray-100 pt-10">
-                    <Link
-                        href={`/user/reader/chapter/${section.chapterId}`}
-                        className="group flex items-center gap-4 text-xs font-black text-[#0F172A] tracking-[0.2em] uppercase hover:text-blue-600 transition-all"
-                    >
-                        <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-blue-50 transition-colors">
-                            <ChevronLeft size={18} className="transition-transform group-hover:-translate-x-1" />
-                        </div>
-                        Chapter Contents
+                <footer className="mt-24 pt-12 border-t border-gray-100 flex justify-between items-center text-gray-400">
+                    <Link href={`/user/reader/chapter/${section.chapterId}`} className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest hover:text-blue-600 transition-colors">
+                        <ChevronLeft size={16} /> Chapter Contents
                     </Link>
-
-                    <div className="text-center md:text-right">
-                        <p className="text-[10px] text-gray-300 font-black uppercase tracking-[0.3em] mb-2 leading-none">
-                            © {new Date().getFullYear()} Cates Legal Group
-                        </p>
-                        <p className="text-[9px] text-gray-300 font-medium">
-                            Premium Legal Research & Practice Support System
-                        </p>
+                    <div className="text-right">
+                        <p className="text-[10px] font-black uppercase tracking-widest">Cates Legal Group</p>
+                        <p className="text-[9px] font-medium opacity-50">Authorized Judicial Library System</p>
                     </div>
-                </div>
-            </footer>
+                </footer>
+            </main>
         </div>
     );
 }

@@ -68,10 +68,18 @@ export default function GuideReaderPage() {
                         
                         <div className="relative z-10 flex flex-col h-full uppercase">
                             <div className="flex items-start justify-between mb-8">
-                                <div className="space-y-1">
-                                    <span className="text-[10px] font-black text-blue-600 tracking-[0.2em]">
-                                        Chapter {chapter.number}
-                                    </span>
+                                <div className="space-y-2">
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-[10px] font-black text-blue-600 tracking-[0.2em]">
+                                            Chapter {chapter.number}
+                                        </span>
+                                        {chapter.code && (
+                                            <>
+                                                <div className="w-1 h-1 rounded-full bg-gray-200" />
+                                                <span className="text-[10px] font-black text-gray-400 tracking-[0.1em]">{chapter.code}</span>
+                                            </>
+                                        )}
+                                    </div>
                                     <div className="h-0.5 w-6 bg-blue-600 transform origin-left group-hover:scale-x-150 transition-transform" />
                                 </div>
                                 <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-[#0F172A] group-hover:text-white transition-all transform group-hover:rotate-12">

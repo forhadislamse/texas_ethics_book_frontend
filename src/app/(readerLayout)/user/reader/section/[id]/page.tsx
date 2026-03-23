@@ -146,29 +146,44 @@ export default function SectionDetailsPage() {
         <div className="space-y-12 pb-20 max-w-4xl mx-auto animate-in fade-in duration-500">
             {/* Header / Breadcrumbs */}
             <header className="space-y-8">
-                <nav className="flex items-center gap-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50 pb-6">
-                    <Link href="/user/reader" className="hover:text-blue-600 transition-colors">Digital Guide</Link>
-                    <ChevronRight size={12} className="opacity-30" />
-                    <Link href={`/user/reader`} className="hover:text-blue-600 transition-colors">
+                <nav className="flex items-center gap-1.5 text-[11px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50 pb-6 whitespace-nowrap overflow-x-auto custom-scrollbar">
+                    <Link href="/user/reader" className="hover:text-blue-600 transition-colors shrink-0">Digital Guide</Link>
+                    <ChevronRight size={12} className="opacity-30 shrink-0" />
+                    <Link href={`/user/reader/chapter/${section.chapterId}`} className="hover:text-blue-600 transition-colors shrink-0">
                         Chapter {section.chapter?.number}
                     </Link>
-                    <ChevronRight size={12} className="opacity-30" />
-                    <span className="text-gray-900">Current Section</span>
+                    {section.subChapter && (
+                        <>
+                            <ChevronRight size={12} className="opacity-30 shrink-0" />
+                            <span className="text-gray-400 truncate max-w-[150px]">{section.subChapter}</span>
+                        </>
+                    )}
+                    <ChevronRight size={12} className="opacity-30 shrink-0" />
+                    <span className="text-gray-900 shrink-0">Section {section.number}</span>
                 </nav>
 
-                <div className="space-y-4">
-                    <h1 className="text-4xl md:text-5xl font-black text-[#0F172A] tracking-tight leading-[1.05]">
-                        Chapter {section.chapter?.number} — {section.chapter?.title}
-                    </h1>
-                    
+                <div className="space-y-6">
                     <div className="flex flex-wrap items-center gap-4">
-                        <div className="bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-blue-500/20">
-                            Sec. {section.number}
+                        {section.chapter?.code && (
+                            <div className="bg-[#0F172A] text-white px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-gray-200 border border-gray-800">
+                                {section.chapter.code}
+                            </div>
+                        )}
+                        <div className="bg-blue-600 text-white px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] shadow-lg shadow-blue-500/20">
+                            Chapter {section.chapter?.number}
                         </div>
-                        <div className="flex items-center gap-2 text-xs text-gray-400 font-bold bg-gray-50 px-3 py-1 rounded-full border border-gray-100">
-                            <Clock size={12} className="text-gray-300" />
-                            <span>Updated March 16, 2026</span>
-                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        {(section.chapter?.titleLevel || section.chapter?.subtitleLevel) && (
+                             <div className="space-y-1">
+                                {section.chapter.titleLevel && <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] leading-none">{section.chapter.titleLevel}</p>}
+                                {section.chapter.subtitleLevel && <p className="text-[9px] font-bold text-blue-500/70 uppercase tracking-[0.2em] leading-none">{section.chapter.subtitleLevel}</p>}
+                             </div>
+                        )}
+                        <h1 className="text-3xl md:text-5xl font-black text-[#0F172A] tracking-tight leading-[1.05]">
+                            {section.chapter?.title}
+                        </h1>
                     </div>
                 </div>
 

@@ -111,29 +111,49 @@ export default function ReaderSidebar() {
 
                                 {isExpanded && (
                                     <div className="mt-1 ml-4 border-l-2 border-gray-50 pl-2 py-1 space-y-0.5 animate-in slide-in-from-left-2 duration-200">
-                                        {chapter.sections?.map((section: any) => {
-                                            const isActive = params.id === section.id;
-                                            return (
-                                                <Link
-                                                    key={section.id}
-                                                    href={`/user/reader/section/${section.id}`}
-                                                    className={`group flex items-center gap-3 px-4 py-2 rounded-lg text-[13px] transition-all relative ${
-                                                        isActive 
-                                                            ? "bg-gray-100 text-gray-900 font-bold" 
-                                                            : "text-gray-500 hover:text-gray-900 hover:bg-gray-50"
-                                                    }`}
-                                                >
-                                                    {isActive && (
-                                                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-4 bg-[#0F172A] rounded-full" />
+                                        {(() => {
+                                            const grouped = chapter.sections?.reduce((acc: any, section: any) => {
+                                                const sub = section.subChapter || "_NONE_";
+                                                if (!acc[sub]) acc[sub] = [];
+                                                acc[sub].push(section);
+                                                return acc;
+                                            }, {});
+
+                                            return grouped && Object.entries(grouped).map(([subTitle, subSections]: [string, any]) => (
+                                                <div key={subTitle} className="space-y-1 pt-2 first:pt-0">
+                                                    {subTitle !== "_NONE_" && (
+                                                        <div className="px-4 py-1.5">
+                                                            <h5 className="text-[8px] font-black text-gray-300 uppercase tracking-[0.2em] leading-none">
+                                                                {subTitle}
+                                                            </h5>
+                                                        </div>
                                                     )}
-                                                    <span className={`shrink-0 font-medium ${isActive ? "text-[#0F172A]" : "text-gray-400"}`}>
-                                                        {section.number}.
-                                                    </span>
-                                                    <span className="truncate">{section.title}</span>
-                                                    {chapter.isLocked && <Lock className="w-3 h-3 ml-auto text-gray-200 group-hover:text-gray-300 transition-colors" />}
-                                                </Link>
-                                            );
-                                        })}
+                                                    {subSections.map((section: any) => {
+                                                        const isActive = params.id === section.id;
+                                                        return (
+                                                            <Link
+                                                                key={section.id}
+                                                                href={`/user/reader/section/${section.id}`}
+                                                                className={`group flex items-center gap-3 px-4 py-2 rounded-lg text-[13px] transition-all relative ${
+                                                                    isActive 
+                                                                        ? "bg-gray-100 text-gray-900 font-bold shadow-sm" 
+                                                                        : "text-gray-500 hover:text-gray-900 hover:bg-gray-50/50"
+                                                                }`}
+                                                            >
+                                                                {isActive && (
+                                                                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3.5 bg-[#0F172A] rounded-full" />
+                                                                )}
+                                                                <span className={`shrink-0 font-bold ${isActive ? "text-[#0F172A]" : "text-gray-400 font-mono text-[10px]"}`}>
+                                                                    {section.number}
+                                                                </span>
+                                                                <span className="truncate flex-1">{section.title}</span>
+                                                                {chapter.isLocked && <Lock className="w-2.5 h-2.5 ml-auto text-gray-200 group-hover:text-gray-300 transition-colors" />}
+                                                            </Link>
+                                                        );
+                                                    })}
+                                                </div>
+                                            ));
+                                        })()}
                                     </div>
                                 )}
                             </div>

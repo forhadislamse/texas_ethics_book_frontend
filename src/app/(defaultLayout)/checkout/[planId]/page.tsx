@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "@/components/module/Payment/CheckoutForm";
+import { toast } from "sonner";
 import { 
     Loader2, 
     ChevronLeft, 
@@ -40,6 +41,7 @@ export default function CheckoutPage() {
                 })
                 .catch((err) => {
                     console.error("Failed to create intent", err);
+                    toast.error(err?.data?.message || "Payment session failed to initialize");
                 });
         }
     }, [planId, createSubscriptionIntent]);

@@ -29,13 +29,13 @@ const baseQueryWithAuth: ReturnType<typeof fetchBaseQuery> = async (
 
   if (
     result.error &&
-    (result.error.status === 401 || result.error.status === 403)
+    result.error.status === 401
   ) {
     api.dispatch(logout());
     // Redirect to login page
-    // if (typeof window !== "undefined") {
-    //   window.location.href = "/login";
-    // }
+    if (typeof window !== "undefined") {
+        window.location.href = "/login";
+    }
   }
 
   return result;

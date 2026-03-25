@@ -1,6 +1,7 @@
 "use client";
 
 import { useGetAllChaptersQuery } from "@/redux/api/guideApi";
+import { useGetMeQuery } from "@/redux/api/authApi";
 import {
     Search,
     ChevronDown,
@@ -19,6 +20,8 @@ export default function ReaderSidebar() {
     const pathname = usePathname();
     const params = useParams();
     const { data: chapters, isLoading } = useGetAllChaptersQuery(undefined);
+    const { data: userData } = useGetMeQuery(undefined);
+    const user = (userData as any)?.data;
     const [expandedChapters, setExpandedChapters] = useState<string[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -103,6 +106,7 @@ export default function ReaderSidebar() {
                                 >
                                     <BookOpen className={`w-4 h-4 shrink-0 ${isChapterInView ? "text-blue-600" : "text-gray-400"}`} />
                                     <span className="flex-1 text-left truncate">Chapter {chapter.number}</span>
+                                    {chapter.isLocked && <Lock className="w-3.5 h-3.5 text-gray-300 mr-1" />}
                                     {isExpanded ? 
                                         <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isChapterInView ? "text-blue-500" : "text-gray-400"}`} /> : 
                                         <ChevronRight className="w-3.5 h-3.5 text-gray-300" />
@@ -170,10 +174,14 @@ export default function ReaderSidebar() {
                          <div className="absolute inset-0 bg-blue-600/10" />
                     </div>
                     <div className="flex-1 min-w-0">
-                        <span className="block font-bold text-gray-900 text-sm truncate leading-none mb-1">Rehab Attia</span>
+                        <span className="block font-bold text-gray-900 text-sm truncate leading-none mb-1">
+                            {user?.name || "User"}
+                        </span>
                         <span className="flex items-center gap-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
-                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Active Plan</span>
+                            <span className={`w-1.5 h-1.5 rounded-full ${user?.isSubscribed ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "bg-gray-300"}`} />
+                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                                {user?.isSubscribed ? "Active Plan" : "No Active Plan"}
+                            </span>
                         </span>
                     </div>
                     <ChevronDown className="w-4 h-4 text-gray-300 group-hover:text-gray-600 transition-colors" />

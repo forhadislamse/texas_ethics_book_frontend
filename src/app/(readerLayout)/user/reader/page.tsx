@@ -8,7 +8,8 @@ import {
     Layers, 
     ArrowUpRight,
     SearchCheck,
-    Library
+    Library,
+    Lock
 } from "lucide-react";
 import Link from "next/link";
 
@@ -82,8 +83,10 @@ export default function GuideReaderPage() {
                                     </div>
                                     <div className="h-0.5 w-6 bg-blue-600 transform origin-left group-hover:scale-x-150 transition-transform" />
                                 </div>
-                                <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-[#0F172A] group-hover:text-white transition-all transform group-hover:rotate-12">
-                                    <BookOpen className="w-5 h-5" />
+                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all transform group-hover:rotate-12 ${
+                                    chapter.isLocked ? "bg-amber-50 text-amber-500" : "bg-gray-50 text-gray-400 group-hover:bg-[#0F172A] group-hover:text-white"
+                                }`}>
+                                    {chapter.isLocked ? <Lock className="w-5 h-5" /> : <BookOpen className="w-5 h-5" />}
                                 </div>
                             </div>
                             

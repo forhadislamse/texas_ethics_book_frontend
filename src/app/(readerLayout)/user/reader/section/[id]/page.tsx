@@ -14,13 +14,15 @@ import {
     BookOpen,
     Layers,
     Anchor,
-    FileText
+    FileText,
+    Lock
 } from "lucide-react";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 
 // Enhanced helper to render content with interactive references and semantic indentation
 const FormattedContent = ({ content, internalRefs, externalRefs }: { 
@@ -133,18 +135,45 @@ const FormattedContent = ({ content, internalRefs, externalRefs }: {
 export default function SectionDetailsPage() {
     const params = useParams();
     const id = params.id as string;
-    const { data: sectionResult, isLoading } = useGetSectionByIdQuery(id);
+    const { data: sectionResult, isLoading, error } = useGetSectionByIdQuery(id);
 
     if (isLoading) {
         return <div className="animate-pulse wiki-doc-container">
             <div className="wiki-sidebar space-y-4">
-                {[1,2,3,4].map(i => <div key={i} className="h-4 bg-gray-100 rounded w-full"></div>)}
+                {[1, 2, 3, 4].map(i => <div key={i} className="h-4 bg-gray-100 rounded w-full"></div>)}
             </div>
             <div className="wiki-main-content space-y-12">
                 <div className="h-6 bg-gray-50 rounded w-1/4"></div>
                 <div className="h-[400px] bg-gray-50/50 rounded-3xl border border-gray-50"></div>
             </div>
         </div>;
+    }
+
+    // Handle 403 Forbidden - Subscription Required
+    if ((error as any)?.status === 403) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[70vh] px-6 text-center animate-in fade-in zoom-in duration-500">
+                <div className="w-20 h-20 bg-blue-50 rounded-3xl flex items-center justify-center mb-8 shadow-sm">
+                    <Lock className="w-10 h-10 text-blue-600" />
+                </div>
+                <h2 className="text-3xl font-black text-gray-900 mb-4 uppercase tracking-tight">Premium Content locked</h2>
+                <p className="text-gray-500 max-w-md mb-10 text-lg italic leading-relaxed">
+                    This section is part of our premium legal guide. Subscribe to one of our plans to unlock full access to all 550+ pages.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                    <Link href="/">
+                        <Button size="lg" className="bg-[#0F172A] hover:bg-gray-800 text-white px-8 py-6 rounded-2xl font-bold uppercase tracking-widest shadow-xl">
+                            View Pricing Plans
+                        </Button>
+                    </Link>
+                    <Link href="/user/reader">
+                        <Button size="lg" variant="outline" className="border-2 border-gray-100 text-gray-600 hover:bg-gray-50 px-8 py-6 rounded-2xl font-bold uppercase tracking-widest">
+                            Back to Library
+                        </Button>
+                    </Link>
+                </div>
+            </div>
+        );
     }
 
     if (!sectionResult?.data) {

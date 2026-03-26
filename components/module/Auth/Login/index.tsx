@@ -52,7 +52,12 @@ const LoginPage = () => {
 
         setCookie(token);
 
-        const user = jwtDecode<CustomJwtPayload>(token);
+        const decodedUser = jwtDecode<CustomJwtPayload>(token);
+        const user = {
+          ...decodedUser,
+          fullName: res.data.fullName,
+          profileImage: res.data.profileImage,
+        };
 
         dispatch(setUser({ token, user }));
 

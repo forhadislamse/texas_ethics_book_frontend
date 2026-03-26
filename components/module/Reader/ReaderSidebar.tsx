@@ -175,7 +175,7 @@ export default function ReaderSidebar() {
                     </div>
                     <div className="flex-1 min-w-0">
                         <span className="block font-bold text-gray-900 text-sm truncate leading-none mb-1">
-                            {user?.name || "User"}
+                            {user?.fullName || "User"}
                         </span>
                         <span className="flex items-center gap-1.5">
                             <span className={`w-1.5 h-1.5 rounded-full ${user?.isSubscribed ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "bg-gray-300"}`} />

@@ -92,14 +92,14 @@ export function NavUser() {
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage
-                  src={data?.image || placeholder}
-                  alt={data?.firstName ?? "User"}
+                  src={data?.data?.profileImage || placeholder.src}
+                  alt={data?.data?.fullName ?? "User"}
                   className="h-8 w-8 object-cover rounded-lg"
                 />
                 <AvatarFallback className="rounded-lg">
                   <Image
-                    src={data?.image || placeholder}
-                    alt={data?.firstName ?? "User"}
+                    src={data?.data?.profileImage || placeholder}
+                    alt={data?.data?.fullName ?? "User"}
                     width={60}
                     height={60}
                     className="h-8 w-8 object-cover rounded-lg"
@@ -108,10 +108,10 @@ export function NavUser() {
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
-                  {data?.firstName || "User"}
+                  {data?.data?.fullName || "User"}
                 </span>
                 <span className="truncate text-xs">
-                  {data?.email || "No email"}
+                  {data?.data?.email || "No email"}
                 </span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
@@ -127,14 +127,14 @@ export function NavUser() {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage
-                    src={data?.image || placeholder.src}
-                    alt={data?.firstName ?? "User"}
+                    src={data?.data?.profileImage || placeholder.src}
+                    alt={data?.data?.fullName ?? "User"}
                     className="h-8 w-8 object-cover rounded-lg"
                   />
                   <AvatarFallback className="rounded-lg">
                     <Image
-                      src={data?.image || placeholder}
-                      alt={data?.firstName ?? "User"}
+                      src={data?.data?.profileImage || placeholder}
+                      alt={data?.data?.fullName ?? "User"}
                       width={60}
                       height={60}
                       className="h-8 w-8 object-cover rounded-lg"
@@ -143,10 +143,10 @@ export function NavUser() {
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
-                    {data?.firstName || "User"}
+                    {data?.data?.fullName || "User"}
                   </span>
                   <span className="truncate text-xs">
-                    {data?.email || "No email"}
+                    {data?.data?.email || "No email"}
                   </span>
                 </div>
               </div>

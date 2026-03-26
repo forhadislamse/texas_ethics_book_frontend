@@ -2,7 +2,7 @@
 
 import { useGetAllChaptersQuery } from "@/redux/api/guideApi";
 import { useGetMeQuery, useLogoutMutation } from "@/redux/api/authApi";
-import { 
+import {
     Search,
     ChevronDown,
     ChevronRight,
@@ -12,7 +12,7 @@ import {
     Menu,
     Settings,
     UserCircle,
-    LogOut as LogOutIcon 
+    LogOut as LogOutIcon
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
@@ -46,7 +46,7 @@ export default function ReaderSidebar() {
     useEffect(() => {
         if (params.id && chapters?.data) {
             // Find the chapter that contains this section
-            const chapterWithSection = chapters.data.find((ch: any) => 
+            const chapterWithSection = chapters.data.find((ch: any) =>
                 ch.sections.some((sec: any) => sec.id === params.id)
             );
             if (chapterWithSection && !expandedChapters.includes(chapterWithSection.id)) {
@@ -123,20 +123,19 @@ export default function ReaderSidebar() {
                     filteredChapters?.map((chapter: any) => {
                         const isExpanded = expandedChapters.includes(chapter.id);
                         const isChapterInView = params.id && chapter.sections.some((s: any) => s.id === params.id);
-                        
+
                         return (
                             <div key={chapter.id} className="mb-1">
                                 <button
                                     onClick={() => toggleChapter(chapter.id)}
-                                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${
-                                        isChapterInView ? "text-blue-600" : "text-gray-600 hover:bg-gray-50"
-                                    }`}
+                                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${isChapterInView ? "text-blue-600" : "text-gray-600 hover:bg-gray-50"
+                                        }`}
                                 >
                                     <BookOpen className={`w-4 h-4 shrink-0 ${isChapterInView ? "text-blue-600" : "text-gray-400"}`} />
                                     <span className="flex-1 text-left truncate">Chapter {chapter.number}</span>
                                     {chapter.isLocked && <Lock className="w-3.5 h-3.5 text-gray-300 mr-1" />}
-                                    {isExpanded ? 
-                                        <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isChapterInView ? "text-blue-500" : "text-gray-400"}`} /> : 
+                                    {isExpanded ?
+                                        <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isChapterInView ? "text-blue-500" : "text-gray-400"}`} /> :
                                         <ChevronRight className="w-3.5 h-3.5 text-gray-300" />
                                     }
                                 </button>
@@ -166,11 +165,10 @@ export default function ReaderSidebar() {
                                                             <Link
                                                                 key={section.id}
                                                                 href={`/user/reader/section/${section.id}`}
-                                                                className={`group flex items-center gap-3 px-4 py-2 rounded-lg text-[13px] transition-all relative ${
-                                                                    isActive 
-                                                                        ? "bg-gray-100 text-gray-900 font-bold shadow-sm" 
+                                                                className={`group flex items-center gap-3 px-4 py-2 rounded-lg text-[13px] transition-all relative ${isActive
+                                                                        ? "bg-gray-100 text-gray-900 font-bold shadow-sm"
                                                                         : "text-gray-500 hover:text-gray-900 hover:bg-gray-50/50"
-                                                                }`}
+                                                                    }`}
                                                             >
                                                                 {isActive && (
                                                                     <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-3.5 bg-[#0F172A] rounded-full" />
@@ -210,7 +208,7 @@ export default function ReaderSidebar() {
                                 <span className="flex items-center gap-1.5">
                                     <span className={`w-1.5 h-1.5 rounded-full ${user?.isSubscribed ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "bg-gray-300"}`} />
                                     <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                                        {user?.isSubscribed ? "Active Plan" : "No Active Plan"}
+                                        {user?.isSubscribed ? "Active Plan" : "Free Plan"}
                                     </span>
                                 </span>
                             </div>
@@ -240,7 +238,7 @@ export default function ReaderSidebar() {
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-            
+
             <style jsx>{`
                 .custom-scrollbar::-webkit-scrollbar {
                     width: 4px;

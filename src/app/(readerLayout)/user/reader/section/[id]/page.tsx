@@ -25,16 +25,16 @@ import {
 import { Button } from "@/components/ui/button";
 
 // Enhanced helper to render content with interactive references and semantic indentation
-const FormattedContent = ({ content, internalRefs, externalRefs }: { 
-    content: string, 
-    internalRefs: any[], 
-    externalRefs: any[] 
+const FormattedContent = ({ content, internalRefs, externalRefs }: {
+    content: string,
+    internalRefs: any[],
+    externalRefs: any[]
 }) => {
     if (!content) return null;
 
     // First, split content into paragraphs/lines to handle indentation
     const lines = content.split('\n');
-    
+
     return (
         <div className="space-y-4">
             {lines.map((line, lineIdx) => {
@@ -103,10 +103,10 @@ const FormattedContent = ({ content, internalRefs, externalRefs }: {
                         parts.forEach((part, i) => {
                             if (part === ref.linkText) {
                                 newElements.push(
-                                    <a 
+                                    <a
                                         key={`${ref.id}-${lineIdx}-${i}`}
-                                        href={ref.url} 
-                                        target="_blank" 
+                                        href={ref.url}
+                                        target="_blank"
                                         rel="noopener noreferrer"
                                         className="text-blue-700 font-medium inline-flex items-center gap-1 hover:underline"
                                     >
@@ -241,10 +241,10 @@ export default function SectionDetailsPage() {
 
                 <div id="content" className="scroll-mt-24 space-y-12">
                     <div className="wiki-legal-text p-2 first-letter:text-5xl first-letter:font-black first-letter:mr-3 first-letter:float-left first-letter:text-blue-600">
-                        <FormattedContent 
-                            content={section.content} 
-                            internalRefs={section.internalRefs} 
-                            externalRefs={section.externalRefs} 
+                        <FormattedContent
+                            content={section.content}
+                            internalRefs={section.internalRefs}
+                            externalRefs={section.externalRefs}
                         />
                     </div>
 

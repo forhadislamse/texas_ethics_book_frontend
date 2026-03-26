@@ -198,7 +198,7 @@ export default function LandingPage() {
                                         ))}
                                     </ul>
 
-                                    <Link href={plan.price === 0 ? "/register" : `/checkout/${plan.id}`}>
+                                    <Link href={plan.price === 0 ? "/login" : `/checkout/${plan.id}`}>
                                         <Button
                                             className={`w-full py-6 rounded-xl font-bold uppercase tracking-widest transition-all ${plan.isPopular
                                                 ? "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-900/40"

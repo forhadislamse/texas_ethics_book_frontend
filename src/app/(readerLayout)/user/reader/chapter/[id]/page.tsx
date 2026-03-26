@@ -3,11 +3,11 @@
 import { useGetChapterByIdQuery } from "@/redux/api/guideApi";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { 
-    ChevronRight, 
-    BookOpen, 
-    Lock, 
-    ChevronLeft, 
+import {
+    ChevronRight,
+    BookOpen,
+    Lock,
+    ChevronLeft,
     Search,
     BookMarked,
     Info,
@@ -136,11 +136,11 @@ export default function ChapterDetailsPage() {
 
                         {/* Wikipedia-Style Infobox */}
                         <div className="wiki-infobox bg-white shadow-sm border-t-4 border-t-blue-600">
-                             <div className="flex items-center gap-2 mb-4">
+                            <div className="flex items-center gap-2 mb-4">
                                 <Info size={16} className="text-blue-600" />
                                 <span className="font-black text-[10px] uppercase tracking-widest text-gray-400">Chapter Metadata</span>
-                             </div>
-                             <div className="space-y-3">
+                            </div>
+                            <div className="space-y-3">
                                 <div className="grid grid-cols-2 py-2 border-b border-gray-50">
                                     <span className="text-[10px] uppercase font-bold text-gray-400">Code</span>
                                     <span className="font-black text-[#0F172A] text-right">{code || "N/A"}</span>
@@ -153,13 +153,13 @@ export default function ChapterDetailsPage() {
                                 <div className="grid grid-cols-2 py-2 border-t border-gray-50">
                                     <span className="text-[10px] uppercase font-bold text-gray-400">Access</span>
                                     <span className="text-right">
-                                        {isLocked ? 
-                                            <span className="inline-flex items-center gap-1 text-[10px] font-black text-amber-500 uppercase"><Lock size={10} /> Limited</span> : 
+                                        {isLocked ?
+                                            <span className="inline-flex items-center gap-1 text-[10px] font-black text-amber-500 uppercase"><Lock size={10} /> Limited</span> :
                                             <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest leading-none">Open Access</span>
                                         }
                                     </span>
                                 </div>
-                             </div>
+                            </div>
                         </div>
                     </div>
                 </header>
@@ -176,8 +176,8 @@ export default function ChapterDetailsPage() {
 
                             <div className="divide-y divide-gray-100 border-t border-gray-100">
                                 {subSections.map((section: any) => (
-                                    <div 
-                                        key={section.id} 
+                                    <div
+                                        key={section.id}
                                         id={`section-${section.number}`}
                                         className="py-10 group scroll-mt-24"
                                     >
@@ -192,7 +192,7 @@ export default function ChapterDetailsPage() {
                                                 <p className="text-gray-500 text-sm leading-relaxed line-clamp-3 font-serif">
                                                     {section.content}
                                                 </p>
-                                                <Link 
+                                                <Link
                                                     href={`/user/reader/section/${section.id}`}
                                                     className="inline-flex items-center gap-2 text-[10px] font-black text-blue-600 uppercase tracking-widest hover:gap-4 transition-all"
                                                 >
@@ -212,7 +212,7 @@ export default function ChapterDetailsPage() {
                         <ChevronLeft size={16} /> Back to Library
                     </Link>
                     <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest">
-                        <BookOpen size={14} /> 
+                        <BookOpen size={14} />
                         <span>Updated March 2026 Edition</span>
                     </div>
                 </footer>

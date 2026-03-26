@@ -177,7 +177,7 @@ export default function ReaderSidebar() {
                                                                     {section.number}
                                                                 </span>
                                                                 <span className="truncate flex-1">{section.title}</span>
-                                                                {chapter.isLocked && <Lock className="w-2.5 h-2.5 ml-auto text-gray-200 group-hover:text-gray-300 transition-colors" />}
+                                                                {section.isLocked && <Lock className="w-2.5 h-2.5 ml-auto text-gray-200 group-hover:text-gray-300 transition-colors" />}
                                                             </Link>
                                                         );
                                                     })}

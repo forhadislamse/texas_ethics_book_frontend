@@ -10,7 +10,7 @@ export const authApi = baseApi.injectEndpoints({
         method: "POST",
         body: credentials,
       }),
-      invalidatesTags: ["User"],
+      invalidatesTags: ["User", "Chapters", "Chapter", "Section"],
     }),
     register: builder.mutation({
       query: (credentials: any) => ({
@@ -18,7 +18,7 @@ export const authApi = baseApi.injectEndpoints({
         method: "POST",
         body: credentials,
       }),
-      invalidatesTags: ["User"],
+      invalidatesTags: ["User", "Chapters", "Chapter", "Section"],
     }),
     socialAuth: builder.mutation({
       query: (credentials: any) => ({
@@ -26,7 +26,7 @@ export const authApi = baseApi.injectEndpoints({
         method: "POST",
         body: credentials,
       }),
-      invalidatesTags: ["User"],
+      invalidatesTags: ["User", "Chapters", "Chapter", "Section"],
     }),
     forgotPassword: builder.mutation({
       query: (email: any) => ({

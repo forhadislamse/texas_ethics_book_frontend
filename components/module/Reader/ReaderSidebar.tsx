@@ -1,20 +1,34 @@
 "use client";
 
 import { useGetAllChaptersQuery } from "@/redux/api/guideApi";
-import { useGetMeQuery } from "@/redux/api/authApi";
-import {
+import { useGetMeQuery, useLogoutMutation } from "@/redux/api/authApi";
+import { 
     Search,
     ChevronDown,
     ChevronRight,
     Lock,
     BookOpen,
     User,
-    Menu
+    Menu,
+    Settings,
+    UserCircle,
+    LogOut as LogOutIcon 
 } from "lucide-react";
 import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { logout } from "@/redux/features/authSlice";
+import { useAppDispatch } from "@/redux/hooks";
+import { baseApi } from "@/redux/api/baseApi";
 
 export default function ReaderSidebar() {
     const pathname = usePathname();
@@ -22,6 +36,9 @@ export default function ReaderSidebar() {
     const { data: chapters, isLoading } = useGetAllChaptersQuery(undefined);
     const { data: userData } = useGetMeQuery(undefined);
     const user = (userData as any)?.data;
+    const dispatch = useAppDispatch();
+    const router = useRouter();
+    const [logoutMutation] = useLogoutMutation();
     const [expandedChapters, setExpandedChapters] = useState<string[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
 
@@ -44,6 +61,17 @@ export default function ReaderSidebar() {
                 ? prev.filter(id => id !== chapterId)
                 : [...prev, chapterId]
         );
+    };
+
+    const handleLogout = async () => {
+        try {
+            await logoutMutation({}).unwrap();
+        } catch (err) {
+            console.error("Logout failed", err);
+        }
+        dispatch(logout());
+        dispatch(baseApi.util.resetApiState());
+        router.push("/");
     };
 
     const filteredChapters = chapters?.data?.filter((chapter: any) =>
@@ -168,24 +196,49 @@ export default function ReaderSidebar() {
 
             {/* User Profile Section */}
             <div className="p-4 border-t border-gray-50 bg-[#F8FAFC]">
-                <div className="flex items-center gap-3 p-2 group cursor-pointer hover:bg-white hover:shadow-sm rounded-xl transition-all">
-                    <div className="w-10 h-10 rounded-full border-2 border-white shadow-sm overflow-hidden flex items-center justify-center bg-white relative">
-                         <Image src="/logo2.png" alt="User" width={40} height={40} className="object-cover scale-110 opacity-80" />
-                         <div className="absolute inset-0 bg-blue-600/10" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                        <span className="block font-bold text-gray-900 text-sm truncate leading-none mb-1">
-                            {user?.fullName || "User"}
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                            <span className={`w-1.5 h-1.5 rounded-full ${user?.isSubscribed ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "bg-gray-300"}`} />
-                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                                {user?.isSubscribed ? "Active Plan" : "No Active Plan"}
-                            </span>
-                        </span>
-                    </div>
-                    <ChevronDown className="w-4 h-4 text-gray-300 group-hover:text-gray-600 transition-colors" />
-                </div>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <div className="flex items-center gap-3 p-2 group cursor-pointer hover:bg-white hover:shadow-sm rounded-xl transition-all">
+                            <div className="w-10 h-10 rounded-full border-2 border-white shadow-sm overflow-hidden flex items-center justify-center bg-white relative">
+                                <Image src="/logo2.png" alt="User" width={40} height={40} className="object-cover scale-110 opacity-80" />
+                                <div className="absolute inset-0 bg-blue-600/10" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <span className="block font-bold text-gray-900 text-sm truncate leading-none mb-1">
+                                    {user?.fullName || "User"}
+                                </span>
+                                <span className="flex items-center gap-1.5">
+                                    <span className={`w-1.5 h-1.5 rounded-full ${user?.isSubscribed ? "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" : "bg-gray-300"}`} />
+                                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                                        {user?.isSubscribed ? "Active Plan" : "No Active Plan"}
+                                    </span>
+                                </span>
+                            </div>
+                            <ChevronDown className="w-4 h-4 text-gray-300 group-hover:text-gray-600 transition-colors" />
+                        </div>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-64 mb-4" align="start" side="top">
+                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <Link href="/user/dashboard/profile">
+                            <DropdownMenuItem className="cursor-pointer">
+                                <UserCircle className="mr-2 h-4 w-4" />
+                                <span>Profile</span>
+                            </DropdownMenuItem>
+                        </Link>
+                        <Link href="/user/dashboard/settings">
+                            <DropdownMenuItem className="cursor-pointer">
+                                <Settings className="mr-2 h-4 w-4" />
+                                <span>Settings</span>
+                            </DropdownMenuItem>
+                        </Link>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 focus:text-red-600">
+                            <LogOutIcon className="mr-2 h-4 w-4" />
+                            <span>Log out</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
             
             <style jsx>{`

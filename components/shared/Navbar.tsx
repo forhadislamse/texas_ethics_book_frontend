@@ -5,8 +5,14 @@ import Image from "next/image";
 import { Twitter, Linkedin, Phone, User } from "lucide-react";
 import Logo from "@/src/assets/logo2.png";
 import { Button } from "@/components/ui/button";
+import { useGetMeQuery } from "@/redux/api/authApi";
+import { useAppSelector } from "@/redux/hooks";
 
 const Navbar = () => {
+    const token = useAppSelector((state) => state.auth.token);
+    const { data: userData, isLoading } = useGetMeQuery(undefined, { skip: !token });
+    const user = (userData as any)?.data;
+
     return (
         <header className="w-full bg-white shadow-sm sticky top-0 z-50">
             {/* Top Bar */}
@@ -62,11 +68,22 @@ const Navbar = () => {
                         <Link href="/about" className="text-[#1E293B] font-semibold hover:text-blue-600 transition-colors uppercase text-sm tracking-wide">
                             About
                         </Link>
-                        <Link href="/login">
-                            <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-6 font-bold uppercase text-xs tracking-widest">
-                                <User size={14} className="mr-2" /> Login
-                            </Button>
-                        </Link>
+                        
+                        {isLoading ? (
+                            <div className="w-20 h-8 bg-gray-100 animate-pulse rounded-lg" />
+                        ) : user ? (
+                            <Link href={user.role === "ADMIN" ? "/admin/dashboard" : "/user/reader"}>
+                                <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-6 font-bold uppercase text-xs tracking-widest">
+                                    <User size={14} className="mr-2" /> {user.fullName || "Account"}
+                                </Button>
+                            </Link>
+                        ) : (
+                            <Link href="/login">
+                                <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-6 font-bold uppercase text-xs tracking-widest">
+                                    <User size={14} className="mr-2" /> Login
+                                </Button>
+                            </Link>
+                        )}
                     </div>
 
                     {/* Mobile Menu Button Placeholder */}

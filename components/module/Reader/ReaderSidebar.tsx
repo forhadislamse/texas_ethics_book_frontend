@@ -216,18 +216,10 @@ export default function ReaderSidebar() {
                         </div>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-64 mb-4" align="start" side="top">
-                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
                         <Link href="/user/dashboard/profile">
                             <DropdownMenuItem className="cursor-pointer">
                                 <UserCircle className="mr-2 h-4 w-4" />
-                                <span>Profile</span>
-                            </DropdownMenuItem>
-                        </Link>
-                        <Link href="/user/dashboard/settings">
-                            <DropdownMenuItem className="cursor-pointer">
-                                <Settings className="mr-2 h-4 w-4" />
-                                <span>Settings</span>
+                                <span>Update Profile</span>
                             </DropdownMenuItem>
                         </Link>
                         <DropdownMenuSeparator />

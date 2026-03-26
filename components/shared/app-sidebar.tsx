@@ -31,17 +31,7 @@ const data = {
         icon: LayoutDashboard,
       },
       {
-        title: "Guide Reader",
-        url: "/user/reader",
-        icon: BookOpen,
-      },
-      {
-        title: "Search Guide",
-        url: "/user/search",
-        icon: Search,
-      },
-      {
-        title: "Your Profile",
+        title: "Account Management",
         url: "/user/dashboard/profile",
         icon: User,
       },

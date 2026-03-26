@@ -38,7 +38,7 @@ export default function LandingPage() {
                                 Master over 550 pages of annotated ethics rules, statutes, and case law in one comprehensive, searchable digital volume. Built for the modern Texas practitioner.
                             </p>
                             <div className="flex flex-wrap gap-5">
-                                <Link href="/register">
+                                <Link href="#pricing">
                                     <Button size="lg" className="bg-[#0D7C84] hover:bg-[#0B656B] text-white px-10 py-7 rounded-full text-xl font-bold transition-all shadow-xl hover:shadow-[#0D7C84]/40 uppercase tracking-widest">
                                         Start Subscription
                                     </Button>
@@ -150,7 +150,7 @@ export default function LandingPage() {
             </section>
 
             {/* Pricing Section */}
-            <section className="py-24 bg-[#F8FAFC]">
+            <section id="pricing" className="py-24 bg-[#F8FAFC]">
                 <div className="container mx-auto px-6 text-center">
                     <h2 className="text-4xl font-bold text-gray-900 mb-4  uppercase">Simple Access Plans for the Digital Guide</h2>
                     <p className="text-gray-600 mb-16 max-w-2xl mx-auto text-lg italic">
@@ -221,7 +221,7 @@ export default function LandingPage() {
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
                 <div className="container mx-auto px-6 text-center relative z-10">
                     <h2 className="text-3xl lg:text-5xl font-bold text-white mb-8  uppercase">Unlock the complete digital guide today.</h2>
-                    <Link href="/register">
+                    <Link href="#pricing">
                         <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-50 px-10 py-8 rounded-2xl text-xl font-bold uppercase tracking-widest transition-all shadow-2xl">START YOUR SUBSCRIPTION</Button>
                     </Link>
                     <p className="text-blue-100 mt-8 font-light italic text-lg">Trusted by Texas Legal Professionals.</p>

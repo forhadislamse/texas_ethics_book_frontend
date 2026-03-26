@@ -8,9 +8,14 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import BookCover from "@/src/assets/book-cover.png";
 import HeroBg from "@/src/assets/dark_legal_library_bg.png";
+import { useAppSelector } from "@/redux/hooks";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function LandingPage() {
     const { data: plans, isLoading } = useGetAllPlansQuery(undefined);
+    const token = useAppSelector((state) => state.auth.token);
+    const router = useRouter();
     return (
         <div className="flex flex-col min-h-screen bg-white">
             {/* Hero Section */}
@@ -198,17 +203,36 @@ export default function LandingPage() {
                                         ))}
                                     </ul>
 
-                                    <Link href={plan.price === 0 ? "/login" : `/checkout/${plan.id}`}>
+                                    {plan.price === 0 ? (
                                         <Button
+                                            onClick={() => {
+                                                if (token) {
+                                                    toast.success("You are already on the Free Plan");
+                                                } else {
+                                                    router.push("/login");
+                                                }
+                                            }}
                                             className={`w-full py-6 rounded-xl font-bold uppercase tracking-widest transition-all ${plan.isPopular
                                                 ? "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-900/40"
                                                 : "border-2 hover:border-blue-600 hover:text-blue-600"
                                                 }`}
                                             variant={plan.isPopular ? "default" : "outline"}
                                         >
-                                            {plan.price === 0 ? "Get Started" : "Subscribe Now"}
+                                            Get Started
                                         </Button>
-                                    </Link>
+                                    ) : (
+                                        <Link href={`/checkout/${plan.id}`}>
+                                            <Button
+                                                className={`w-full py-6 rounded-xl font-bold uppercase tracking-widest transition-all ${plan.isPopular
+                                                    ? "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-900/40"
+                                                    : "border-2 hover:border-blue-600 hover:text-blue-600"
+                                                    }`}
+                                                variant={plan.isPopular ? "default" : "outline"}
+                                            >
+                                                Subscribe Now
+                                            </Button>
+                                        </Link>
+                                    )}
                                 </div>
                             ))}
                         </div>

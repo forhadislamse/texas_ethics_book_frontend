@@ -3,7 +3,7 @@
 import { useGetPlanByIdQuery } from "@/redux/api/planApi";
 import { useCreateSubscriptionIntentMutation } from "@/redux/api/paymentApi";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "@/components/module/Payment/CheckoutForm";
@@ -27,12 +27,14 @@ export default function CheckoutPage() {
     const planId = params.planId as string;
     
     const { data: planResult, isLoading: planLoading } = useGetPlanByIdQuery(planId);
+    const isInitialMount = useRef(true);
     const [createSubscriptionIntent, { data: intentResult, isLoading: intentLoading }] = useCreateSubscriptionIntentMutation();
     const [clientSecret, setClientSecret] = useState<string | null>(null);
     const [orderId, setOrderId] = useState<string | null>(null);
 
     useEffect(() => {
-        if (planId) {
+        if (planId && !clientSecret && !orderId && isInitialMount.current) {
+            isInitialMount.current = false;
             createSubscriptionIntent({ planId })
                 .unwrap()
                 .then((res: any) => {
@@ -41,10 +43,11 @@ export default function CheckoutPage() {
                 })
                 .catch((err) => {
                     console.error("Failed to create intent", err);
+                    isInitialMount.current = true; // Allow retry on failure
                     toast.error(err?.data?.message || "Payment session failed to initialize");
                 });
         }
-    }, [planId, createSubscriptionIntent]);
+    }, [planId, createSubscriptionIntent, clientSecret, orderId]);
 
     if (planLoading || intentLoading) {
         return (

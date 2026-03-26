@@ -4,8 +4,9 @@ import { useSearchGuideQuery } from "@/redux/api/guideApi";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Search, ChevronRight } from "lucide-react";
+import { Search, ChevronRight, Lock } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
@@ -15,10 +16,31 @@ export default function SearchResultsPage() {
     const query = searchParams.get("q") || "";
     const [searchTerm, setSearchTerm] = useState(query);
 
-    const { data: searchResults, isLoading } = useSearchGuideQuery(
+    const { data: searchResults, isLoading, error } = useSearchGuideQuery(
         { q: query, limit: 20 },
         { skip: !query }
     );
+
+    if ((error as any)?.status === 402 || (error as any)?.status === 403) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] px-6 text-center animate-in fade-in zoom-in duration-500">
+                <div className="w-20 h-20 bg-blue-50 rounded-3xl flex items-center justify-center mb-8 shadow-sm">
+                    <Lock className="w-10 h-10 text-blue-600" />
+                </div>
+                <h2 className="text-3xl font-black text-gray-900 mb-4 uppercase tracking-tight">Premium feature locked</h2>
+                <p className="text-gray-500 max-w-md mb-10 text-lg italic leading-relaxed">
+                    The precision search feature is part of our premium legal guide. Subscribe to a plan to unlock full search capabilities.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                    <Link href="/">
+                        <Button size="lg" className="bg-[#0F172A] hover:bg-gray-800 text-white px-8 py-6 rounded-2xl font-bold uppercase tracking-widest shadow-xl">
+                            View Pricing Plans
+                        </Button>
+                    </Link>
+                </div>
+            </div>
+        );
+    }
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();

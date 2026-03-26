@@ -36,7 +36,7 @@ export default function ChapterDetailsPage() {
     }
 
     // Handle 403 Forbidden - Subscription Required
-    if ((error as any)?.status === 403) {
+    if ((error as any)?.status === 402 || (error as any)?.status === 403) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[70vh] px-6 text-center animate-in fade-in zoom-in duration-500">
                 <div className="w-20 h-20 bg-blue-50 rounded-3xl flex items-center justify-center mb-8 shadow-sm">

@@ -11,10 +11,13 @@ import HeroBg from "@/src/assets/dark_legal_library_bg.png";
 import { useAppSelector } from "@/redux/hooks";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useGetMeQuery } from "@/redux/api/authApi";
 
 export default function LandingPage() {
     const { data: plans, isLoading } = useGetAllPlansQuery(undefined);
     const token = useAppSelector((state) => state.auth.token);
+    const { data: userData } = useGetMeQuery(undefined, { skip: !token });
+    const user = (userData as any)?.data;
     const router = useRouter();
     return (
         <div className="flex flex-col min-h-screen bg-white">
@@ -57,7 +60,7 @@ export default function LandingPage() {
                         </div>
 
                         <div className="hidden lg:flex lg:w-1/2 justify-center lg:justify-end">
-                            <motion.div 
+                            <motion.div
                                 initial={{ opacity: 0, x: 30 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 0.8, ease: "easeOut" }}
@@ -65,7 +68,7 @@ export default function LandingPage() {
                             >
                                 {/* Glow effect */}
                                 <div className="absolute -inset-4 bg-[#0D7C84]/20 rounded-full blur-3xl"></div>
-                                
+
                                 <div className="relative bg-white/5 p-2 rounded-2xl backdrop-blur-sm border border-white/10 shadow-2xl">
                                     <Image
                                         src={BookCover}
@@ -221,17 +224,24 @@ export default function LandingPage() {
                                             Get Started
                                         </Button>
                                     ) : (
-                                        <Link href={`/checkout/${plan.id}`}>
-                                            <Button
-                                                className={`w-full py-6 rounded-xl font-bold uppercase tracking-widest transition-all ${plan.isPopular
-                                                    ? "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-900/40"
-                                                    : "border-2 hover:border-blue-600 hover:text-blue-600"
-                                                    }`}
-                                                variant={plan.isPopular ? "default" : "outline"}
-                                            >
-                                                Subscribe Now
-                                            </Button>
-                                        </Link>
+                                        <Button
+                                            onClick={() => {
+                                                if (!token) {
+                                                    router.push("/login");
+                                                } else if (user?.isSubscribed && user?.planId === plan.id && (user?.subscriptionExpiresAt && new Date(user.subscriptionExpiresAt) > new Date())) {
+                                                    toast.success(`You are already subscribed to the ${plan.name}`);
+                                                } else {
+                                                    router.push(`/checkout/${plan.id}`);
+                                                }
+                                            }}
+                                            className={`w-full py-6 rounded-xl font-bold uppercase tracking-widest transition-all ${plan.isPopular
+                                                ? "bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-900/40"
+                                                : "border-2 hover:border-blue-600 hover:text-blue-600"
+                                                }`}
+                                            variant={plan.isPopular ? "default" : "outline"}
+                                        >
+                                            Subscribe Now
+                                        </Button>
                                     )}
                                 </div>
                             ))}

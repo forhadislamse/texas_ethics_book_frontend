@@ -24,9 +24,9 @@ export default function DashboardLayout({
       {/* Pass the user role dynamically to AppSidebar */}
       <AppSidebar role={role} />
       <SidebarInset>
-        <header className="flex h-16 b shrink-0  items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+        <header className="flex h-14 shrink-0 items-center gap-2 bg-white border-b border-gray-100 shadow-sm transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
+            <SidebarTrigger className="-ml-1 text-gray-500 hover:text-gray-900" />
           </div>
         </header>
         <div className="p-4 pt-0 bg-[#F1F5F9] min-h-screen">{children}</div>

@@ -104,17 +104,18 @@ export default function AppSidebar({ role, ...props }: AppSidebarProps) {
       className="w-64 bg-white border-r border-blue-200"
       {...props}
     >
-      <SidebarHeader>
+      <SidebarHeader className="py-4">
         <Link
           href={"/"}
-          className="flex items-center w-full max-h-40 justify-center"
+          className="flex items-center w-full justify-center"
         >
           <Image
             src={Logo.src}
             alt="Logo"
-            width={300}
-            height={300}
-            className="size-auto "
+            width={160}
+            height={60}
+            className="w-auto h-auto max-w-[80%] max-h-16 object-contain"
+            priority
           />
         </Link>
       </SidebarHeader>

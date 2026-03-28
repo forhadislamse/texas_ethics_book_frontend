@@ -112,134 +112,136 @@ export default function AdminDashboardPage() {
         ))}
       </div>
 
-      {/* Revenue Bar Chart */}
-      <Card className="border border-gray-100 shadow-sm bg-white">
-        <CardHeader className="flex flex-row items-center justify-between px-6 pt-5 pb-2">
-          <div>
-            <CardTitle className="text-base font-semibold text-gray-900">
-              Revenue Overview
-            </CardTitle>
-            <p className="text-xs text-muted-foreground mt-0.5">Monthly breakdown for this year</p>
-          </div>
-          <div className="text-xs text-muted-foreground border border-gray-200 rounded-md px-2 py-1 bg-gray-50">
-            {new Date().getFullYear()}
-          </div>
-        </CardHeader>
-        <CardContent className="px-6 pb-6">
-          <div className="h-[240px] flex items-end justify-between gap-1.5 pt-4">
-            {annualRevenueChart.map((item, idx) => {
-              const barHeight = (item.revenue / maxRevenue) * 100;
-              return (
-                <div key={idx} className="flex flex-col items-center gap-1.5 flex-1 min-w-0">
-                  <div className="relative group flex flex-col items-center w-full">
-                    {/* Tooltip */}
-                    <div className="absolute bottom-full mb-2 bg-gray-900 text-white text-[10px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 whitespace-nowrap z-10 transition-opacity duration-150 pointer-events-none">
-                      ${item.revenue.toLocaleString()}
-                    </div>
-                    {/* Bar */}
-                    <div
-                      className="w-full rounded-t-sm transition-all duration-500 ease-out"
-                      style={{
-                        height: `${Math.max(barHeight, 4)}%`,
-                        minHeight: "4px",
-                        maxHeight: "200px",
-                        background:
-                          item.revenue === maxRevenue
-                            ? "linear-gradient(to top, #006064, #00ACC1)"
-                            : "#CBD5E1",
-                      }}
-                    />
-                  </div>
-                  <span className="text-[9px] text-muted-foreground font-medium">
-                    {item.month}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Recent Subscriptions Table */}
-      <Card className="border border-gray-100 shadow-sm bg-white">
-        <CardHeader className="px-6 pt-5 pb-0">
-          <div className="flex items-center justify-between">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-start">
+        {/* Revenue Bar Chart */}
+        <Card className="border border-gray-100 shadow-sm bg-white xl:col-span-2">
+          <CardHeader className="flex flex-row items-center justify-between px-6 pt-5 pb-2">
             <div>
               <CardTitle className="text-base font-semibold text-gray-900">
-                Recent Subscriptions
+                Revenue Overview
               </CardTitle>
-              <p className="text-xs text-muted-foreground mt-0.5">Last 5 paid subscriptions</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Monthly breakdown for this year</p>
             </div>
-            <span className="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1 font-medium">
-              {recentSubscriptions.length} entries
-            </span>
-          </div>
-        </CardHeader>
-        <CardContent className="p-0 mt-4">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-gray-50 border-y border-gray-100 hover:bg-gray-50">
-                <TableHead className="font-semibold text-xs text-muted-foreground px-6">User</TableHead>
-                <TableHead className="font-semibold text-xs text-muted-foreground">Date</TableHead>
-                <TableHead className="font-semibold text-xs text-muted-foreground">Plan</TableHead>
-                <TableHead className="font-semibold text-xs text-muted-foreground text-right pr-6">
-                  Amount
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {recentSubscriptions.length > 0 ? (
-                recentSubscriptions.map((sub: any) => (
-                  <TableRow
-                    key={sub.id}
-                    className="hover:bg-gray-50 border-b border-gray-50 transition-colors"
-                  >
-                    <TableCell className="px-6">
-                      <div className="flex items-center gap-3">
-                        <Avatar className="h-8 w-8 border border-gray-100">
-                          <AvatarImage src={sub.user?.profileImage} />
-                          <AvatarFallback className="text-xs bg-blue-50 text-blue-700 font-semibold">
-                            {sub.user?.fullName?.charAt(0)?.toUpperCase() || "U"}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col">
-                          <span className="font-medium text-sm text-gray-900">
-                            {sub.user?.fullName || "Unknown"}
-                          </span>
-                          <span className="text-[10px] text-muted-foreground">
-                            {sub.user?.email}
-                          </span>
-                        </div>
+            <div className="text-xs text-muted-foreground border border-gray-200 rounded-md px-2 py-1 bg-gray-50">
+              {new Date().getFullYear()}
+            </div>
+          </CardHeader>
+          <CardContent className="px-6 pb-6">
+            <div className="h-[240px] flex justify-between gap-1.5 pt-4">
+              {annualRevenueChart.map((item, idx) => {
+                const barHeight = (item.revenue / maxRevenue) * 100;
+                return (
+                  <div key={idx} className="flex flex-col items-center justify-end gap-1.5 flex-1 min-w-0 h-full">
+                    <div 
+                      className="relative group flex flex-col items-center justify-end w-full"
+                      style={{ height: `${Math.max(barHeight, 4)}%` }}
+                    >
+                      {/* Tooltip */}
+                      <div className="absolute bottom-full mb-2 bg-gray-900 text-white text-[10px] px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 whitespace-nowrap z-10 transition-opacity duration-150 pointer-events-none">
+                        ${item.revenue.toLocaleString()}
                       </div>
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {sub.createdAt
-                        ? format(new Date(sub.createdAt), "MMM dd, yyyy")
-                        : "N/A"}
-                    </TableCell>
-                    <TableCell>
-                      <span className="text-sm font-medium text-gray-700 bg-gray-100 px-2 py-0.5 rounded-full">
-                        {sub.plan?.name || "N/A"}
-                      </span>
-                    </TableCell>
-                    <TableCell className="text-right pr-6">
-                      <span className="font-bold text-sm text-emerald-600">
-                        ${sub.amount}
-                      </span>
+                      {/* Bar */}
+                      <div
+                        className="w-full h-full rounded-t-sm transition-all duration-500 ease-out"
+                        style={{
+                          background:
+                            item.revenue === maxRevenue
+                              ? "linear-gradient(to top, #006064, #00ACC1)"
+                              : "#CBD5E1",
+                        }}
+                      />
+                    </div>
+                    <span className="text-[9px] text-muted-foreground font-medium">
+                      {item.month}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Recent Subscriptions Table */}
+        <Card className="border border-gray-100 shadow-sm bg-white xl:col-span-1 h-full">
+          <CardHeader className="px-6 pt-5 pb-0">
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-base font-semibold text-gray-900">
+                  Recent Subscriptions
+                </CardTitle>
+                <p className="text-xs text-muted-foreground mt-0.5">Last 5 paid subscriptions</p>
+              </div>
+              <span className="text-xs bg-gray-100 text-gray-600 rounded-full px-2.5 py-1 font-medium">
+                {recentSubscriptions.length} entries
+              </span>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0 mt-4 overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-gray-50 border-y border-gray-100 hover:bg-gray-50">
+                  <TableHead className="font-semibold text-xs text-muted-foreground px-6 whitespace-nowrap">User</TableHead>
+                  <TableHead className="font-semibold text-xs text-muted-foreground whitespace-nowrap">Date</TableHead>
+                  <TableHead className="font-semibold text-xs text-muted-foreground whitespace-nowrap">Plan</TableHead>
+                  <TableHead className="font-semibold text-xs text-muted-foreground text-right pr-6 whitespace-nowrap">
+                    Amount
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {recentSubscriptions.length > 0 ? (
+                  recentSubscriptions.map((sub: any) => (
+                    <TableRow
+                      key={sub.id}
+                      className="hover:bg-gray-50 border-b border-gray-50 transition-colors"
+                    >
+                      <TableCell className="px-6">
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-8 w-8 border border-gray-100 shrink-0">
+                            <AvatarImage src={sub.user?.profileImage} />
+                            <AvatarFallback className="text-xs bg-blue-50 text-blue-700 font-semibold">
+                              {sub.user?.fullName?.charAt(0)?.toUpperCase() || "U"}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex flex-col min-w-0">
+                            <span className="font-medium text-sm text-gray-900 truncate max-w-[120px]">
+                              {sub.user?.fullName || "Unknown"}
+                            </span>
+                            <span className="text-[10px] text-muted-foreground truncate max-w-[120px]">
+                              {sub.user?.email}
+                            </span>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
+                        {sub.createdAt
+                          ? format(new Date(sub.createdAt), "MMM dd")
+                          : "N/A"}
+                      </TableCell>
+                      <TableCell>
+                        <span className="text-[11px] font-medium text-gray-700 bg-gray-100 px-2 py-0.5 rounded-full whitespace-nowrap">
+                          {sub.plan?.name || "N/A"}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right pr-6">
+                        <span className="font-bold text-sm text-emerald-600">
+                          ${sub.amount}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center py-12 text-muted-foreground text-sm">
+                      No recent subscriptions found.
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={4} className="text-center py-12 text-muted-foreground text-sm">
-                    No recent subscriptions found.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

@@ -32,7 +32,7 @@ export const guideApi = baseApi.injectEndpoints({
             providesTags: ["Section"],
         }),
         searchGuide: builder.query({
-            query: (params: { q: string; page?: number; limit?: number }) => ({
+            query: (params: { searchTerm: string; page?: number; limit?: number }) => ({
                 url: "/guide/search",
                 method: "GET",
                 params,

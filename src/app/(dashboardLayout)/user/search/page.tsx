@@ -16,8 +16,26 @@ export default function SearchResultsPage() {
     const query = searchParams.get("q") || "";
     const [searchTerm, setSearchTerm] = useState(query);
 
+    const highlightText = (text: string, term: string) => {
+        if (!term || !text) return text;
+        const parts = String(text).split(new RegExp(`(${term})`, "gi"));
+        return (
+            <span>
+                {parts.map((part, i) =>
+                    part.toLowerCase() === term.toLowerCase() ? (
+                        <mark key={i} className="bg-blue-100 text-blue-900 rounded-sm px-0.5 font-medium">
+                            {part}
+                        </mark>
+                    ) : (
+                        part
+                    )
+                )}
+            </span>
+        );
+    };
+
     const { data: searchResults, isLoading, error } = useSearchGuideQuery(
-        { q: query, limit: 20 },
+        { searchTerm: query, limit: 20 },
         { skip: !query }
     );
 
@@ -92,20 +110,20 @@ export default function SearchResultsPage() {
                                         <div className="flex items-start justify-between mb-3">
                                             <div>
                                                 <Badge variant="outline" className="text-blue-600 bg-blue-50 border-blue-100 mb-2">
-                                                    Sec. {result.number}
+                                                    Sec. {highlightText(result.number, query)}
                                                 </Badge>
                                                 <h3 className="text-xl font-bold text-gray-900 ">
-                                                    {result.title}
+                                                    {highlightText(result.title, query)}
                                                 </h3>
                                             </div>
                                             <ChevronRight className="text-gray-300 group-hover:text-blue-500 transition-transform group-hover:translate-x-2" />
                                         </div>
-                                        <div className="text-gray-600 line-clamp-3 text-sm leading-relaxed mb-3">
-                                            {result.content}
+                                        <div className="text-gray-600 line-clamp-3 text-sm leading-relaxed mb-3 italic">
+                                            {highlightText(result.content, query)}
                                         </div>
                                         <div className="flex items-center gap-2 text-xs font-bold text-blue-500 uppercase tracking-tighter">
                                             {result.chapter?.number && (
-                                                <span>Chapter {result.chapter.number} — {result.chapter.title}</span>
+                                                <span>Chapter {highlightText(result.chapter.number, query)} — {highlightText(result.chapter.title, query)}</span>
                                             )}
                                         </div>
                                     </div>

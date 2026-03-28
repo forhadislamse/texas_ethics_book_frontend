@@ -31,11 +31,11 @@ const FormattedContent = ({ content, internalRefs = [], externalRefs = [] }: { c
     if (!content) return null;
 
     let normalizedContent = content;
-    
+
     // BACKWARD COMPATIBILITY: If content is legacy DB plain text (lacks HTML tags)
     // We convert it to standard HTML markup on the fly so html-react-parser can process it natively
     const isLegacyText = !/<(?:p|div|span|strong|em|a|ul|ol|li|h[1-6])[^>]*>/i.test(normalizedContent);
-    
+
     if (isLegacyText) {
         // Wrap plain text lines into paragraphs
         normalizedContent = normalizedContent
@@ -50,7 +50,7 @@ const FormattedContent = ({ content, internalRefs = [], externalRefs = [] }: { c
                 if (!ref.linkText) return;
                 const escapeRegExp = (string: string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                 const regex = new RegExp(escapeRegExp(ref.linkText), 'gi');
-                normalizedContent = normalizedContent.replace(regex, 
+                normalizedContent = normalizedContent.replace(regex,
                     `<a href="#" data-ref-type="internal" data-popup-title="${ref.popupTitle}" data-popup-excerpt="${ref.popupExcerpt}">${ref.linkText}</a>`
                 );
             });
@@ -60,7 +60,7 @@ const FormattedContent = ({ content, internalRefs = [], externalRefs = [] }: { c
                 if (!ref.linkText) return;
                 const escapeRegExp = (string: string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                 const regex = new RegExp(escapeRegExp(ref.linkText), 'gi');
-                normalizedContent = normalizedContent.replace(regex, 
+                normalizedContent = normalizedContent.replace(regex,
                     `<a href="${ref.url || "#"}" data-ref-type="external">${ref.linkText}</a>`
                 );
             });

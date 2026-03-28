@@ -51,25 +51,35 @@ const data = {
       },
       {
         title: "Users",
-        url: "/user/dashboard/users",
-        icon: HandCoins,
-        items: [
-          {
-            title: "Users",
-            url: "/user/dashboard/estimates",
-            icon: Users,
-          },
-          {
-            title: "Pending Users",
-            url: "/user/dashboard/pending-users",
-            icon: InfoIcon,
-          },
-        ],
+        url: "/admin/users",
+        icon: Users,
       },
       {
-        title: "Your Profile",
-        url: "/user/dashboard/profile",
-        icon: User,
+        title: "Transactions",
+        url: "/admin/transactions",
+        icon: HandCoins,
+      },
+      {
+        title: "Subscriptions",
+        url: "/admin/subscriptions",
+        icon: BookOpen,
+      },
+      {
+        title: "Content",
+        url: "#",
+        icon: InfoIcon,
+        items: [
+          {
+            title: "Chapters",
+            url: "/admin/chapters",
+            icon: BookOpen,
+          },
+          {
+            title: "Sections",
+            url: "/admin/sections",
+            icon: Search,
+          },
+        ],
       },
       {
         title: "Go Back To Home",

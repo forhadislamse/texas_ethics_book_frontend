@@ -1,11 +1,11 @@
 "use client";
 
 import { useGetAllChaptersQuery } from "@/redux/api/guideApi";
-import { 
-    BookOpen, 
-    Search, 
-    ChevronRight, 
-    Layers, 
+import {
+    BookOpen,
+    Search,
+    ChevronRight,
+    Layers,
     ArrowUpRight,
     SearchCheck,
     Library,
@@ -66,7 +66,7 @@ export default function GuideReaderPage() {
                     >
                         {/* Decorative background element */}
                         <div className="absolute top-0 right-0 w-32 h-32 bg-gray-50 rounded-bl-[2.5rem] -mr-12 -mt-12 transition-all duration-500 group-hover:bg-blue-50/50 group-hover:scale-150" />
-                        
+
                         <div className="relative z-10 flex flex-col h-full uppercase">
                             <div className="flex items-start justify-between mb-8">
                                 <div className="space-y-2">
@@ -83,17 +83,16 @@ export default function GuideReaderPage() {
                                     </div>
                                     <div className="h-0.5 w-6 bg-blue-600 transform origin-left group-hover:scale-x-150 transition-transform" />
                                 </div>
-                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all transform group-hover:rotate-12 ${
-                                    chapter.isLocked ? "bg-amber-50 text-amber-500" : "bg-gray-50 text-gray-400 group-hover:bg-[#0F172A] group-hover:text-white"
-                                }`}>
+                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all transform group-hover:rotate-12 ${chapter.isLocked ? "bg-amber-50 text-amber-500" : "bg-gray-50 text-gray-400 group-hover:bg-[#0F172A] group-hover:text-white"
+                                    }`}>
                                     {chapter.isLocked ? <Lock className="w-5 h-5" /> : <BookOpen className="w-5 h-5" />}
                                 </div>
                             </div>
-                            
+
                             <h3 className="text-2xl md:text-3xl font-black text-[#0F172A] mb-4 group-hover:text-blue-600 transition-colors leading-tight tracking-tight">
                                 {chapter.title}
                             </h3>
-                            
+
                             <div className="mt-auto pt-8 flex items-center justify-between border-t border-gray-50">
                                 <span className="text-[10px] font-black text-gray-400 tracking-widest">
                                     {chapter._count?.sections || 0} Professional Entries
@@ -109,9 +108,9 @@ export default function GuideReaderPage() {
             </div>
 
             <section className="bg-[#0F172A] rounded-[3rem] p-12 md:p-20 text-white relative overflow-hidden shadow-2xl shadow-gray-200">
-                 <div className="absolute right-0 bottom-0 w-96 h-96 bg-blue-600/10 rounded-tl-full -mr-32 -mb-32 blur-3xl" />
-                 
-                 <div className="relative z-10 max-w-2xl space-y-8">
+                <div className="absolute right-0 bottom-0 w-96 h-96 bg-blue-600/10 rounded-tl-full -mr-32 -mb-32 blur-3xl" />
+
+                <div className="relative z-10 max-w-2xl space-y-8">
                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-[10px] font-black uppercase tracking-widest border border-white/10 backdrop-blur-sm">
                         <SearchCheck size={12} className="text-blue-400" />
                         Internal Intelligence
@@ -128,7 +127,7 @@ export default function GuideReaderPage() {
                             Explore Search Features
                         </button>
                     </div>
-                 </div>
+                </div>
             </section>
         </div>
     );

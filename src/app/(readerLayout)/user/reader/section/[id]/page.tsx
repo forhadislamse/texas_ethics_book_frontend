@@ -27,8 +27,45 @@ import { Button } from "@/components/ui/button";
 import parse, { DOMNode, Element, domToReact } from 'html-react-parser';
 
 // Enhanced helper to render HTML content from Tiptap with interactive references and semantic indentation
-const FormattedContent = ({ content }: { content: string }) => {
+const FormattedContent = ({ content, internalRefs = [], externalRefs = [] }: { content: string, internalRefs?: any[], externalRefs?: any[] }) => {
     if (!content) return null;
+
+    let normalizedContent = content;
+    
+    // BACKWARD COMPATIBILITY: If content is legacy DB plain text (lacks HTML tags)
+    // We convert it to standard HTML markup on the fly so html-react-parser can process it natively
+    const isLegacyText = !/<(?:p|div|span|strong|em|a|ul|ol|li|h[1-6])[^>]*>/i.test(normalizedContent);
+    
+    if (isLegacyText) {
+        // Wrap plain text lines into paragraphs
+        normalizedContent = normalizedContent
+            .split('\n')
+            .filter(line => line.trim() !== '')
+            .map(line => `<p>${line}</p>`)
+            .join('');
+
+        // Reconstruct legacy link texts as Tiptap-style HTML tags structure so the parser picks them up below
+        if (internalRefs && internalRefs.length > 0) {
+            internalRefs.forEach(ref => {
+                if (!ref.linkText) return;
+                const escapeRegExp = (string: string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const regex = new RegExp(escapeRegExp(ref.linkText), 'gi');
+                normalizedContent = normalizedContent.replace(regex, 
+                    `<a href="#" data-ref-type="internal" data-popup-title="${ref.popupTitle}" data-popup-excerpt="${ref.popupExcerpt}">${ref.linkText}</a>`
+                );
+            });
+        }
+        if (externalRefs && externalRefs.length > 0) {
+            externalRefs.forEach(ref => {
+                if (!ref.linkText) return;
+                const escapeRegExp = (string: string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const regex = new RegExp(escapeRegExp(ref.linkText), 'gi');
+                normalizedContent = normalizedContent.replace(regex, 
+                    `<a href="${ref.url || "#"}" data-ref-type="external">${ref.linkText}</a>`
+                );
+            });
+        }
+    }
 
     const options = {
         replace: (domNode: DOMNode) => {
@@ -38,7 +75,7 @@ const FormattedContent = ({ content }: { content: string }) => {
                 if (domNode.children[0] && (domNode.children[0] as any).data) {
                     textContent = (domNode.children[0] as any).data;
                 }
-                
+
                 let indentClass = "";
                 if (textContent.match(/^\s*\([a-z]\)/i)) indentClass = "wiki-indent-1";
                 else if (textContent.match(/^\s*\(\d+\)/)) indentClass = "wiki-indent-2";
@@ -55,11 +92,11 @@ const FormattedContent = ({ content }: { content: string }) => {
 
             if (domNode instanceof Element && domNode.name === "a") {
                 const refType = domNode.attribs["data-ref-type"];
-                
+
                 if (refType === "internal") {
                     const popupTitle = domNode.attribs["data-popup-title"];
                     const popupExcerpt = domNode.attribs["data-popup-excerpt"];
-                    
+
                     return (
                         <Popover>
                             <PopoverTrigger asChild>
@@ -82,14 +119,14 @@ const FormattedContent = ({ content }: { content: string }) => {
                         </Popover>
                     );
                 }
-                
+
                 if (refType === "external") {
                     let url = domNode.attribs["href"] || "#";
                     // Fallback to auto-prefix with https:// if someone manually removes it
                     if (url !== "#" && !/^https?:\/\//i.test(url)) {
                         url = `https://${url}`;
                     }
-                    
+
                     return (
                         <a
                             href={url}
@@ -106,7 +143,7 @@ const FormattedContent = ({ content }: { content: string }) => {
         }
     };
 
-    return <div className="prose prose-blue max-w-none">{parse(content, options)}</div>;
+    return <div className="prose prose-blue max-w-none break-words leading-relaxed">{parse(normalizedContent, options)}</div>;
 };
 
 export default function SectionDetailsPage() {
@@ -222,13 +259,15 @@ export default function SectionDetailsPage() {
                 </header>
 
                 <div id="content" className="scroll-mt-24 space-y-12">
-                    <div className="p-2 first-letter:text-5xl first-letter:font-black first-letter:mr-3 first-letter:float-left first-letter:text-blue-600">
-                        <FormattedContent content={section.content} />
+                    <div className="p-2 flex break-words flex-col">
+                        <div className="first-letter:text-5xl first-letter:font-black first-letter:mr-3 first-letter:float-left first-letter:text-blue-600">
+                            <FormattedContent content={section.content} internalRefs={section.internalRefs} externalRefs={section.externalRefs} />
+                        </div>
                     </div>
 
                     {section.addedBy && (
                         <p className="text-xs text-gray-400 font-bold italic border-l-2 border-gray-100 pl-4 py-1 uppercase tracking-widest">
-                            Legislative/Regulatory Source: <div className="inline-block prose prose-sm prose-gray"><FormattedContent content={section.addedBy} /></div>
+                            Legislative/Regulatory Source: <div className="inline-block prose prose-sm prose-gray"><FormattedContent content={section.addedBy} internalRefs={section.internalRefs} externalRefs={section.externalRefs} /></div>
                         </p>
                     )}
                 </div>
@@ -242,7 +281,7 @@ export default function SectionDetailsPage() {
                                 Practice Notes
                             </h3>
                             <div className="wiki-legal-text italic text-gray-600">
-                                <FormattedContent content={section.practiceNotes} />
+                                <FormattedContent content={section.practiceNotes} internalRefs={section.internalRefs} externalRefs={section.externalRefs} />
                             </div>
                         </div>
                     )}
@@ -254,7 +293,7 @@ export default function SectionDetailsPage() {
                                 Ethics Opinions
                             </h3>
                             <div className="wiki-legal-text">
-                                <FormattedContent content={section.ethicsOpinions} />
+                                <FormattedContent content={section.ethicsOpinions} internalRefs={section.internalRefs} externalRefs={section.externalRefs} />
                             </div>
                         </div>
                     )}
@@ -266,7 +305,7 @@ export default function SectionDetailsPage() {
                                 Relevant Case Law
                             </h3>
                             <div className="wiki-legal-text font-serif">
-                                <FormattedContent content={section.caseLaw} />
+                                <FormattedContent content={section.caseLaw} internalRefs={section.internalRefs} externalRefs={section.externalRefs} />
                             </div>
                         </div>
                     )}
@@ -278,7 +317,7 @@ export default function SectionDetailsPage() {
                                 AG Opinions
                             </h3>
                             <div className="wiki-legal-text">
-                                <FormattedContent content={section.agOpinions} />
+                                <FormattedContent content={section.agOpinions} internalRefs={section.internalRefs} externalRefs={section.externalRefs} />
                             </div>
                         </div>
                     )}
@@ -290,7 +329,7 @@ export default function SectionDetailsPage() {
                                 Cross References
                             </h3>
                             <div className="wiki-legal-text text-sm text-gray-500 italic">
-                                <FormattedContent content={section.crossReferences} />
+                                <FormattedContent content={section.crossReferences} internalRefs={section.internalRefs} externalRefs={section.externalRefs} />
                             </div>
                         </div>
                     )}

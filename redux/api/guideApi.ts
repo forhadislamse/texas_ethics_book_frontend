@@ -9,6 +9,14 @@ export const guideApi = baseApi.injectEndpoints({
             }),
             providesTags: ["Chapters"],
         }),
+        getAllSections: builder.query({
+            query: (params: { page?: number; limit?: number; searchTerm?: string; chapterId?: string }) => ({
+                url: "/guide/sections",
+                method: "GET",
+                params,
+            }),
+            providesTags: ["Section"],
+        }),
         getChapterById: builder.query({
             query: (id: string) => ({
                 url: `/guide/chapters/${id}`,
@@ -132,6 +140,7 @@ export const guideApi = baseApi.injectEndpoints({
 
 export const {
     useGetAllChaptersQuery,
+    useGetAllSectionsQuery,
     useGetChapterByIdQuery,
     useGetSectionByIdQuery,
     useSearchGuideQuery,

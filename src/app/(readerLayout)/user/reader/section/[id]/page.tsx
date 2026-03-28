@@ -24,112 +24,85 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 
-// Enhanced helper to render content with interactive references and semantic indentation
-const FormattedContent = ({ content, internalRefs, externalRefs }: {
-    content: string,
-    internalRefs: any[],
-    externalRefs: any[]
-}) => {
+import parse, { DOMNode, Element, domToReact } from 'html-react-parser';
+
+// Enhanced helper to render HTML content from Tiptap with interactive references and semantic indentation
+const FormattedContent = ({ content }: { content: string }) => {
     if (!content) return null;
 
-    // First, split content into paragraphs/lines to handle indentation
-    const lines = content.split('\n');
-
-    return (
-        <div className="space-y-4">
-            {lines.map((line, lineIdx) => {
-                if (!line.trim()) return null;
-
-                // Detect indentation level based on patterns: (a), (1), (A), (i)
+    const options = {
+        replace: (domNode: DOMNode) => {
+            if (domNode instanceof Element && domNode.name === "p") {
+                // Try to extract text content to check for indentation prefixes
+                let textContent = "";
+                if (domNode.children[0] && (domNode.children[0] as any).data) {
+                    textContent = (domNode.children[0] as any).data;
+                }
+                
                 let indentClass = "";
-                if (line.match(/^\s*\([a-z]\)/i)) indentClass = "wiki-indent-1";
-                else if (line.match(/^\s*\(\d+\)/)) indentClass = "wiki-indent-2";
-                else if (line.match(/^\s*\([A-Z]\)/)) indentClass = "wiki-indent-3";
-                else if (line.match(/^\s*\([ivx]+\)/i)) indentClass = "pl-32"; // deeper
+                if (textContent.match(/^\s*\([a-z]\)/i)) indentClass = "wiki-indent-1";
+                else if (textContent.match(/^\s*\(\d+\)/)) indentClass = "wiki-indent-2";
+                else if (textContent.match(/^\s*\([A-Z]\)/)) indentClass = "wiki-indent-3";
+                else if (textContent.match(/^\s*\([ivx]+\)/i)) indentClass = "pl-32";
 
-                let elements: (string | React.ReactNode)[] = [line];
-
-                // Handle Internal References (Popups)
-                internalRefs?.forEach((ref) => {
-                    const newElements: (string | React.ReactNode)[] = [];
-                    elements.forEach((el) => {
-                        if (typeof el !== 'string') {
-                            newElements.push(el);
-                            return;
-                        }
-
-                        const parts = el.split(new RegExp(`(${ref.linkText})`, 'g'));
-                        parts.forEach((part, i) => {
-                            if (part === ref.linkText) {
-                                newElements.push(
-                                    <Popover key={`${ref.id}-${lineIdx}-${i}`}>
-                                        <PopoverTrigger asChild>
-                                            <button className="text-blue-600 font-bold hover:underline cursor-pointer decoration-blue-200 underline-offset-4">
-                                                {part}
-                                            </button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-80 p-0 overflow-hidden border-none shadow-2xl rounded-2xl">
-                                            <div className="bg-[#0F172A] p-4">
-                                                <div className="flex items-center gap-2 mb-1">
-                                                    <BookOpen className="w-3.5 h-3.5 text-blue-400" />
-                                                    <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Internal Reference</span>
-                                                </div>
-                                                <h4 className="text-sm font-bold text-white leading-tight">{ref.popupTitle}</h4>
-                                            </div>
-                                            <div className="p-4 bg-white text-xs leading-relaxed text-gray-600 italic">
-                                                &quot;{ref.popupExcerpt}&quot;
-                                            </div>
-                                        </PopoverContent>
-                                    </Popover>
-                                );
-                            } else {
-                                if (part) newElements.push(part);
-                            }
-                        });
-                    });
-                    elements = newElements;
-                });
-
-                // Handle External References (Links)
-                externalRefs?.forEach((ref) => {
-                    const newElements: (string | React.ReactNode)[] = [];
-                    elements.forEach((el) => {
-                        if (typeof el !== 'string') {
-                            newElements.push(el);
-                            return;
-                        }
-
-                        const parts = el.split(new RegExp(`(${ref.linkText})`, 'g'));
-                        parts.forEach((part, i) => {
-                            if (part === ref.linkText) {
-                                newElements.push(
-                                    <a
-                                        key={`${ref.id}-${lineIdx}-${i}`}
-                                        href={ref.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="text-blue-700 font-medium inline-flex items-center gap-1 hover:underline"
-                                    >
-                                        {part}
-                                        <ExternalLink className="w-3 h-3 opacity-40 shrink-0" />
-                                    </a>
-                                );
-                            } else {
-                                if (part) newElements.push(part);
-                            }
-                        });
-                    });
-                    elements = newElements;
-                });
-
+                // Return the P tag cleanly with parsed React children
                 return (
-                    <p key={lineIdx} className={`${indentClass} wiki-legal-text`}>
-                        {elements}
+                    <p className={`${indentClass} wiki-legal-text mb-4`}>
+                        {domToReact(domNode.children as DOMNode[], options)}
                     </p>
                 );
-            })}
-        </div>
-    );
+            }
+
+            if (domNode instanceof Element && domNode.name === "a") {
+                const refType = domNode.attribs["data-ref-type"];
+                
+                if (refType === "internal") {
+                    const popupTitle = domNode.attribs["data-popup-title"];
+                    const popupExcerpt = domNode.attribs["data-popup-excerpt"];
+                    
+                    return (
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <button className="text-blue-600 font-bold hover:underline cursor-pointer decoration-blue-200 underline-offset-4">
+                                    {domToReact(domNode.children as DOMNode[], options)}
+                                </button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-80 p-0 overflow-hidden border-none shadow-2xl rounded-2xl">
+                                <div className="bg-[#0F172A] p-4">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <BookOpen className="w-3.5 h-3.5 text-blue-400" />
+                                        <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Internal Reference</span>
+                                    </div>
+                                    <h4 className="text-sm font-bold text-white leading-tight">{popupTitle}</h4>
+                                </div>
+                                <div className="p-4 bg-white text-xs leading-relaxed text-gray-600 italic">
+                                    &quot;{popupExcerpt}&quot;
+                                </div>
+                            </PopoverContent>
+                        </Popover>
+                    );
+                }
+                
+                if (refType === "external") {
+                    const url = domNode.attribs["href"];
+                    
+                    return (
+                        <a
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-700 font-medium inline-flex items-center gap-1 hover:underline"
+                        >
+                            {domToReact(domNode.children as DOMNode[], options)}
+                            <ExternalLink className="w-3 h-3 opacity-40 shrink-0" />
+                        </a>
+                    );
+                }
+            }
+        }
+    };
+
+    return <div className="prose prose-blue max-w-none">{parse(content, options)}</div>;
 };
 
 export default function SectionDetailsPage() {
@@ -218,13 +191,18 @@ export default function SectionDetailsPage() {
                     </nav>
 
                     <div className="space-y-6">
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 flex-wrap">
                             <span className="px-3 py-1 bg-[#0F172A] text-white text-[10px] font-black uppercase tracking-widest rounded shadow-sm">
                                 {section.chapter?.code || "GOV CODE"}
                             </span>
                             <span className="px-3 py-1 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest rounded shadow-sm">
                                 SEC. {section.number}
                             </span>
+                            {section.subChapter && (
+                                <span className="px-3 py-1 bg-gray-100 text-gray-600 text-[10px] font-black uppercase tracking-widest rounded shadow-sm">
+                                    {section.subChapter}
+                                </span>
+                            )}
                         </div>
                         <h1 className="text-4xl md:text-5xl font-black text-[#0F172A] tracking-tight leading-tight">
                             {section.title}
@@ -240,17 +218,13 @@ export default function SectionDetailsPage() {
                 </header>
 
                 <div id="content" className="scroll-mt-24 space-y-12">
-                    <div className="wiki-legal-text p-2 first-letter:text-5xl first-letter:font-black first-letter:mr-3 first-letter:float-left first-letter:text-blue-600">
-                        <FormattedContent
-                            content={section.content}
-                            internalRefs={section.internalRefs}
-                            externalRefs={section.externalRefs}
-                        />
+                    <div className="p-2 first-letter:text-5xl first-letter:font-black first-letter:mr-3 first-letter:float-left first-letter:text-blue-600">
+                        <FormattedContent content={section.content} />
                     </div>
 
                     {section.addedBy && (
                         <p className="text-xs text-gray-400 font-bold italic border-l-2 border-gray-100 pl-4 py-1 uppercase tracking-widest">
-                            Legislative/Regulatory Source: {section.addedBy}
+                            Legislative/Regulatory Source: <div className="inline-block prose prose-sm prose-gray"><FormattedContent content={section.addedBy} /></div>
                         </p>
                     )}
                 </div>
@@ -263,8 +237,8 @@ export default function SectionDetailsPage() {
                                 <Info className="text-blue-600" size={20} />
                                 Practice Notes
                             </h3>
-                            <div className="wiki-legal-text italic text-gray-600 whitespace-pre-wrap">
-                                {section.practiceNotes}
+                            <div className="wiki-legal-text italic text-gray-600">
+                                <FormattedContent content={section.practiceNotes} />
                             </div>
                         </div>
                     )}
@@ -275,8 +249,8 @@ export default function SectionDetailsPage() {
                                 <Scale className="text-amber-600" size={20} />
                                 Ethics Opinions
                             </h3>
-                            <div className="wiki-legal-text whitespace-pre-wrap">
-                                {section.ethicsOpinions}
+                            <div className="wiki-legal-text">
+                                <FormattedContent content={section.ethicsOpinions} />
                             </div>
                         </div>
                     )}
@@ -287,8 +261,8 @@ export default function SectionDetailsPage() {
                                 <Gavel className="text-[#0F172A]" size={20} />
                                 Relevant Case Law
                             </h3>
-                            <div className="wiki-legal-text whitespace-pre-wrap font-serif">
-                                {section.caseLaw}
+                            <div className="wiki-legal-text font-serif">
+                                <FormattedContent content={section.caseLaw} />
                             </div>
                         </div>
                     )}
@@ -299,8 +273,8 @@ export default function SectionDetailsPage() {
                                 <Scale className="text-indigo-600" size={20} />
                                 AG Opinions
                             </h3>
-                            <div className="wiki-legal-text whitespace-pre-wrap">
-                                {section.agOpinions}
+                            <div className="wiki-legal-text">
+                                <FormattedContent content={section.agOpinions} />
                             </div>
                         </div>
                     )}
@@ -311,8 +285,8 @@ export default function SectionDetailsPage() {
                                 <Layers className="text-gray-400" size={20} />
                                 Cross References
                             </h3>
-                            <div className="wiki-legal-text whitespace-pre-wrap text-sm text-gray-500 italic">
-                                {section.crossReferences}
+                            <div className="wiki-legal-text text-sm text-gray-500 italic">
+                                <FormattedContent content={section.crossReferences} />
                             </div>
                         </div>
                     )}

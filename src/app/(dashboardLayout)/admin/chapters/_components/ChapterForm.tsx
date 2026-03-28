@@ -16,22 +16,22 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 
-const chapterSchema = z.object({
-  number: z.string().min(1, { message: "Chapter No. is required" }),
-  order: z.number().min(1, { message: "Display order must be a valid number" }),
-  title: z.string().min(1, { message: "Chapter Title is required" }),
+const getChapterSchema = (isEdit: boolean) => z.object({
+  number: isEdit ? z.string().optional() : z.string().min(1, { message: "Chapter No. is required" }),
+  order: isEdit ? z.union([z.number(), z.string().length(0)]).optional() : z.number().min(1, { message: "Display order must be a valid number" }),
+  title: isEdit ? z.string().optional() : z.string().min(1, { message: "Chapter Title is required" }),
   code: z.string().optional(),
   titleLevel: z.string().optional(),
   subtitleLevel: z.string().optional(),
 });
 
-export type ChapterFormValues = z.infer<typeof chapterSchema>;
+export type ChapterFormValues = any;
 
 interface ChapterFormProps {
-  initialData?: ChapterFormValues;
+  initialData?: any;
   isEdit?: boolean;
   isSubmitting?: boolean;
-  onSubmit: (data: ChapterFormValues) => void;
+  onSubmit: (data: any) => void;
 }
 
 export default function ChapterForm({
@@ -42,8 +42,8 @@ export default function ChapterForm({
 }: ChapterFormProps) {
   const router = useRouter();
 
-  const form = useForm<ChapterFormValues>({
-    resolver: zodResolver(chapterSchema),
+  const form = useForm<any>({
+    resolver: zodResolver(getChapterSchema(isEdit)),
     defaultValues: initialData || {
       number: "",
       order: 1,

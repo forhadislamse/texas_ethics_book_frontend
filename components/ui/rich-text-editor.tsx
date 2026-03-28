@@ -98,13 +98,12 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
 
   const saveLink = () => {
     if (!linkText) {
-        // If no link text, don't do anything or alert
         return;
     }
 
     if (linkTab === "internal") {
       // Internal reference
-      const href = `#internal-${Math.random().toString(36).substr(2, 9)}`; // dummy href just to trigger the link styling
+      const href = `#internal-${Math.random().toString(36).substr(2, 9)}`;
       editor
         .chain()
         .focus()
@@ -119,12 +118,17 @@ const MenuBar = ({ editor }: { editor: Editor | null }) => {
         .run();
     } else {
       // External reference
+      if (!url) return;
+      
+      // Auto-prefix with https:// if no protocol is given
+      const formattedUrl = /^https?:\/\//i.test(url) ? url : `https://${url}`;
+
       editor
         .chain()
         .focus()
         .extendMarkRange("link")
         .setLink({ 
-            href: url, 
+            href: formattedUrl, 
             "data-ref-type": "external",
             "data-popup-title": null,
             "data-popup-excerpt": null

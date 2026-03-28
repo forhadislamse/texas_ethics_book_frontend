@@ -84,7 +84,11 @@ const FormattedContent = ({ content }: { content: string }) => {
                 }
                 
                 if (refType === "external") {
-                    const url = domNode.attribs["href"];
+                    let url = domNode.attribs["href"] || "#";
+                    // Fallback to auto-prefix with https:// if someone manually removes it
+                    if (url !== "#" && !/^https?:\/\//i.test(url)) {
+                        url = `https://${url}`;
+                    }
                     
                     return (
                         <a

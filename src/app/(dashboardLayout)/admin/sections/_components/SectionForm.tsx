@@ -25,13 +25,13 @@ import { useRouter } from "next/navigation";
 import { useGetAllChaptersQuery } from "@/redux/api/guideApi";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 
-const sectionSchema = z.object({
-  number: z.string().min(1, { message: "Section Number is required" }),
-  title: z.string().min(1, { message: "Section Title is required" }),
-  chapterId: z.string().min(1, { message: "Chapter is required" }),
-  order: z.number().min(1, { message: "Display order must be a valid number" }),
+const getSectionSchema = (isEdit: boolean) => z.object({
+  number: isEdit ? z.string().optional() : z.string().min(1, { message: "Section Number is required" }),
+  title: isEdit ? z.string().optional() : z.string().min(1, { message: "Section Title is required" }),
+  chapterId: isEdit ? z.string().optional() : z.string().min(1, { message: "Chapter is required" }),
+  order: isEdit ? z.union([z.number(), z.string().length(0)]).optional() : z.number().min(1, { message: "Display order must be a valid number" }),
   subChapter: z.string().optional(),
-  content: z.string().min(1, { message: "Main content is required" }),
+  content: isEdit ? z.string().optional() : z.string().min(1, { message: "Main content is required" }),
   addedBy: z.string().optional(),
   practiceNotes: z.string().optional(),
   caseLaw: z.string().optional(),
@@ -40,13 +40,13 @@ const sectionSchema = z.object({
   crossReferences: z.string().optional(),
 });
 
-export type SectionFormValues = z.infer<typeof sectionSchema>;
+export type SectionFormValues = any;
 
 interface SectionFormProps {
-  initialData?: SectionFormValues;
+  initialData?: any;
   isEdit?: boolean;
   isSubmitting?: boolean;
-  onSubmit: (data: SectionFormValues) => void;
+  onSubmit: (data: any) => void;
 }
 
 export default function SectionForm({
@@ -60,8 +60,8 @@ export default function SectionForm({
   const { data: chaptersData } = useGetAllChaptersQuery({});
   const chapters = chaptersData?.data || [];
 
-  const form = useForm<SectionFormValues>({
-    resolver: zodResolver(sectionSchema),
+  const form = useForm<any>({
+    resolver: zodResolver(getSectionSchema(isEdit)),
     defaultValues: initialData || {
       number: "",
       title: "",

@@ -1,0 +1,61 @@
+{
+  "statusCode": 200,
+  "success": true,
+  "message": "Subscription plans retrieved successfully",
+  "data": [
+    {
+      "id": "69b7c3384b0bf1312b60f77c",
+      "name": "Free Plan",
+      "price": 0,
+      "currency": "USD",
+      "duration": "unlimited",
+      "features": [
+        "Access to selected preview chapters",
+        "Limited search functionality",
+        "View sample rules and commentary",
+        "Experience the digital reading interface"
+      ],
+      "isPopular": false,
+      "isActive": true,
+      "createdAt": "2026-03-16T08:45:43.365Z",
+      "updatedAt": "2026-04-05T08:35:57.778Z"
+    },
+    {
+      "id": "69b7c3384b0bf1312b60f77d",
+      "name": "Monthly Plan",
+      "price": 19.99,
+      "currency": "USD",
+      "duration": "monthly",
+      "features": [
+        "Full access to all chapters and sections",
+        "Powerful keyword search",
+        "Practice Notes & Citations",
+        "Ethics Commission Opinions Database",
+        "Case Law & Attorney General Opinions",
+        "Access on all devices"
+      ],
+      "isPopular": true,
+      "isActive": true,
+      "createdAt": "2026-03-16T08:45:44.544Z",
+      "updatedAt": "2026-04-05T08:35:58.969Z"
+    },
+    {
+      "id": "69b7c3384b0bf1312b60f77e",
+      "name": "Yearly Plan",
+      "price": 199.99,
+      "currency": "USD",
+      "duration": "yearly",
+      "features": [
+        "Everything included in Monthly Access",
+        "Full guide access for 12 months",
+        "Priority updates when new content is added",
+        "Best value for attorneys and legal researchers"
+      ],
+      "isPopular": false,
+      "isActive": true,
+      "createdAt": "2026-03-16T08:45:44.877Z",
+      "updatedAt": "2026-04-05T08:35:59.315Z"
+    }
+  ],
+  "stats": {}
+}

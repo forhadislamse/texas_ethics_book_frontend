@@ -18,8 +18,11 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Starter kit",
-  description: "starter kit for nextjs with redux and redux persist",
+  title: "Texas Ethics Law Book",
+  description: "Texas Ethics Book - Study and prepare for the Texas Ethics exam",
+  // icons: {
+  //   icon: "/logo2.png",
+  // },
 };
 
 export default function RootLayout({

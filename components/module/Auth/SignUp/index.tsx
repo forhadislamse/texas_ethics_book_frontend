@@ -3,6 +3,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import darkLegalBg from "@/src/assets/dark_legal_library_bg.png";
+import logoImg from "@/src/assets/logo2.png";
 import { Button } from "@/components/ui/button";
 import { useRegisterMutation } from "@/redux/api/authApi";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -80,18 +82,26 @@ export default function RegistrationForm() {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-6xl flex flex-col md:flex-row gap-8 items-center">
-        <div className="w-full md:w-1/2 bg-[#0a1628] rounded-3xl p-12 flex items-center justify-center lg:min-h-[600px]">
+        <div className="w-full md:w-1/2 bg-[#0a1628] rounded-3xl overflow-hidden lg:min-h-[600px]">
           <Image
-            src="/logo2.png"
-            alt="Logo"
-            className="w-48 h-auto object-contain"
-            width={500}
-            height={500}
+            src={darkLegalBg}
+            alt="Legal Library"
+            className="object-cover h-full w-full"
+            priority
           />
         </div>
 
         <div className="w-full md:w-1/2 bg-white rounded-3xl shadow-lg p-8">
           <div className="text-center mb-8">
+            <Link href="/">
+              <Image
+                src={logoImg}
+                alt="Logo"
+                width={120}
+                height={40}
+                className="mx-auto mb-4"
+              />
+            </Link>
             <h2 className="text-2xl font-bold text-gray-800 mb-2">
               Join Our Club
             </h2>

@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import darkLegalBg from "@/src/assets/dark_legal_library_bg.png";
+import logoImg from "@/src/assets/logo2.png";
 import PHInput from "@/components/form/NRInput";
 import { Button } from "@/components/ui/button";
 import { useLoginMutation } from "@/redux/api/authApi";
@@ -79,13 +81,11 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="flex w-full max-w-6xl items-center gap-28 px-4">
-        <div className="hidden md:flex flex-1 items-center justify-center bg-[#0c1421] rounded-lg min-h-[90vh]">
+        <div className="hidden md:flex flex-1 items-center justify-center bg-[#0c1421] rounded-lg min-h-[90vh] overflow-hidden">
           <Image
-            src="/logo2.png"
-            alt="BPC Logo"
-            width={420}
-            height={420}
-            className="object-contain"
+            src={darkLegalBg}
+            alt="Legal Library"
+            className="object-cover h-full w-full"
             priority
           />
         </div>
@@ -93,8 +93,8 @@ const LoginPage = () => {
         <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-md">
           <Link href="/">
             <Image
-              src="/logo2.png"
-              alt="BPC Logo"
+              src={logoImg}
+              alt="Logo"
               width={150}
               height={50}
               className="mx-auto mb-4 rounded-2xl"

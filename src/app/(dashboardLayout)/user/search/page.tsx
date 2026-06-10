@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useSearchGuideQuery } from "@/redux/api/guideApi";
@@ -13,7 +14,8 @@ import { useRouter } from "next/navigation";
 const RECENT_SEARCHES_KEY = "texas_ethics_recent_searches";
 const MAX_RECENT = 5;
 
-const getRecentSearches = (): string[] => {
+// Lazy initializer - runs once on first render
+const initRecentSearches = (): string[] => {
     if (typeof window === "undefined") return [];
     try {
         const stored = localStorage.getItem(RECENT_SEARCHES_KEY);
@@ -25,7 +27,8 @@ const getRecentSearches = (): string[] => {
 
 const addRecentSearch = (term: string) => {
     try {
-        const recent = getRecentSearches().filter(s => s.toLowerCase() !== term.toLowerCase());
+        const current = initRecentSearches();
+        const recent = current.filter(s => s.toLowerCase() !== term.toLowerCase());
         recent.unshift(term);
         localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(recent.slice(0, MAX_RECENT)));
     } catch {
@@ -38,22 +41,29 @@ export default function SearchResultsPage() {
     const router = useRouter();
     const query = searchParams.get("q") || "";
     const [searchTerm, setSearchTerm] = useState(query);
-    const [recentSearches, setRecentSearches] = useState<string[]>([]);
+    const [recentSearches, setRecentSearches] = useState<string[]>(initRecentSearches);
 
-    useEffect(() => {
-        setRecentSearches(getRecentSearches());
-    }, []);
+    // Save the search when a query is executed and refresh list
+    const runSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (searchTerm.trim()) {
+            addRecentSearch(searchTerm);
+            setRecentSearches(initRecentSearches());
+            router.push(`/user/search?q=${encodeURIComponent(searchTerm)}`);
+        }
+    };
 
-    // Save the search when a query is executed
+    // Also save when page loads with a query (e.g. direct URL)
     useEffect(() => {
         if (query) {
             addRecentSearch(query);
-            setRecentSearches(getRecentSearches());
+            setRecentSearches(initRecentSearches());
         }
-    }, [query]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const removeRecentSearch = (term: string) => {
-        const updated = getRecentSearches().filter(s => s !== term);
+        const updated = initRecentSearches().filter(s => s !== term);
         localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(updated));
         setRecentSearches(updated);
     };
@@ -102,18 +112,11 @@ export default function SearchResultsPage() {
         );
     }
 
-    const handleSearch = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (searchTerm.trim()) {
-            router.push(`/user/search?q=${encodeURIComponent(searchTerm)}`);
-        }
-    };
-
     return (
         <div className="max-w-5xl mx-auto py-8">
             <header className="mb-10">
                 <h1 className="text-3xl font-bold text-gray-900 mb-6 ">Search the Guide</h1>
-                <form onSubmit={handleSearch} className="relative max-w-2xl">
+                <form onSubmit={runSearch} className="relative max-w-2xl">
                     <Input
                         type="text"
                         placeholder="Search rules, annotations, or case law..."

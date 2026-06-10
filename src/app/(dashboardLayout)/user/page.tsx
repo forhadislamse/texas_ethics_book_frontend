@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { useGetMeQuery } from "@/redux/api/authApi";
@@ -6,7 +7,7 @@ import { useAppSelector } from "@/redux/hooks";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Loader2, BookOpen, CreditCard, CalendarDays, ShieldCheck, BadgeCheck, ChevronRight, Clock, User, PieChart } from "lucide-react";
+import { Loader2, BookOpen, CreditCard, CalendarDays, ShieldCheck, BadgeCheck, ChevronRight, User, PieChart } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { useMemo, useState, useEffect } from "react";
@@ -171,7 +172,7 @@ export default function UserDashboardPage() {
                             <div className="flex items-center gap-6">
                                 {/* Donut Chart */}
                                 {activeSubscription && daysRemaining > 0 && (
-                                    <div className="relative w-20 h-20 flex-shrink-0">
+                                    <div className="relative w-20 h-20 shrink-0">
                                         <svg className="w-20 h-20 -rotate-90" viewBox="0 0 36 36">
                                             <circle cx="18" cy="18" r="15.5" fill="none" stroke="#e5e7eb" strokeWidth="3" />
                                             <circle
@@ -220,7 +221,7 @@ export default function UserDashboardPage() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                 {plan.features.map((feature: string, idx: number) => (
                                     <div key={idx} className="flex items-center gap-2 text-sm text-gray-700">
-                                        <BadgeCheck className="h-4 w-4 text-emerald-500 flex-shrink-0" />
+                                        <BadgeCheck className="h-4 w-4 text-emerald-500 shrink-0" />
                                         {feature}
                                     </div>
                                 ))}

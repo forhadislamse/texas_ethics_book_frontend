@@ -45,14 +45,6 @@ export default function ProfilePage() {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-    // Sync user data into form fields when data loads
-    useEffect(() => {
-        if (user) {
-            setFullName(user.fullName || "");
-            setPhone(user.phone || "");
-        }
-    }, [user?.fullName, user?.phone]);
-
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
@@ -281,7 +273,7 @@ export default function ProfilePage() {
                                         <div className="pt-2 space-y-1.5">
                                             {plan.features.slice(0, 3).map((f: string, idx: number) => (
                                                 <div key={idx} className="flex items-center gap-2 text-xs text-gray-600">
-                                                    <BadgeCheck className="h-3 w-3 text-emerald-500 flex-shrink-0" />
+                                                    <BadgeCheck className="h-3 w-3 text-emerald-500 shrink-0" />
                                                     {f}
                                                 </div>
                                             ))}

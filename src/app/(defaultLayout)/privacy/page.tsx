@@ -56,7 +56,7 @@ const PrivacyPage = () => {
           <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-4">7. Third-Party Services</h2>
           <p>The Service may contain links to third-party websites. We are not responsible for the privacy practices of these external sites. We encourage you to review their privacy policies.</p>
 
-          <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-4">8. Children's Privacy</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-4">8. Children&apos;s Privacy</h2>
           <p>The Service is not intended for individuals under the age of 18. We do not knowingly collect personal information from minors.</p>
 
           <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-4">9. Changes to This Policy</h2>

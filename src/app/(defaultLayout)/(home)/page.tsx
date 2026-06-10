@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import Link from "next/link";
@@ -27,7 +28,7 @@ export default function LandingPage() {
             <section className="relative min-h-[600px] lg:min-h-[750px] flex items-center pt-24 pb-0 bg-[#0F172A] z-20">
                 {/* Background Image Wrapper */}
                 <div className="absolute inset-0 z-0 overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#0F172A] via-[#0F172A]/95 to-[#0F172A]/40 z-10"></div>
+                    <div className="absolute inset-0 bg-linear-to-r from-[#0F172A] via-[#0F172A]/95 to-[#0F172A]/40 z-10"></div>
                     <Image
                         src={HeroBg.src}
                         alt="Legal Library Background"
@@ -199,7 +200,7 @@ export default function LandingPage() {
                                         </div>
                                     </div>
 
-                                    <ul className="text-left space-y-4 mb-10 flex-grow">
+                                    <ul className="text-left space-y-4 mb-10 grow">
                                         {plan.features?.map((feature: string, idx: number) => (
                                             <li key={idx} className={`flex items-center gap-3 italic ${plan.isPopular ? "text-white" : "text-gray-600"}`}>
                                                 <BadgeCheck size={18} className={plan.isPopular ? "text-blue-400" : "text-green-500"} />

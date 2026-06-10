@@ -11,7 +11,7 @@ const TermsPage = () => {
           <p className="text-lg font-medium text-gray-800">Last Updated: January 2026</p>
           
           <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-4">1. Acceptance of Terms</h2>
-          <p>By accessing and using the Texas Ethics Laws digital guide ("the Service"), you agree to be bound by these Terms & Conditions. If you do not agree with any part of these terms, you must not use the Service.</p>
+          <p>By accessing and using the Texas Ethics Laws digital guide (&quot;the Service&quot;), you agree to be bound by these Terms & Conditions. If you do not agree with any part of these terms, you must not use the Service.</p>
 
           <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-4">2. Subscription & Billing</h2>
           <p>Access to certain features of the Service requires a paid subscription. By subscribing, you agree to:</p>
@@ -40,7 +40,7 @@ const TermsPage = () => {
           </ul>
 
           <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-4">6. Limitation of Liability</h2>
-          <p>The Texas Ethics Laws digital guide is provided "as is" without any warranty. Cates Legal Group shall not be liable for any indirect, incidental, or consequential damages arising from your use of the Service. The legal content provided is for educational purposes and does not constitute legal advice.</p>
+          <p>The Texas Ethics Laws digital guide is provided &quot;as is&quot; without any warranty. Cates Legal Group shall not be liable for any indirect, incidental, or consequential damages arising from your use of the Service. The legal content provided is for educational purposes and does not constitute legal advice.</p>
 
           <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-4">7. Termination</h2>
           <p>We reserve the right to suspend or terminate your access to the Service at any time for violation of these terms. Upon termination, your right to use the Service will immediately cease.</p>

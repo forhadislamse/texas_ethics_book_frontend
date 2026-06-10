@@ -4,17 +4,59 @@ import { useSearchGuideQuery } from "@/redux/api/guideApi";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Search, ChevronRight, Lock } from "lucide-react";
+import { Search, ChevronRight, Lock, Clock, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+
+const RECENT_SEARCHES_KEY = "texas_ethics_recent_searches";
+const MAX_RECENT = 5;
+
+const getRecentSearches = (): string[] => {
+    if (typeof window === "undefined") return [];
+    try {
+        const stored = localStorage.getItem(RECENT_SEARCHES_KEY);
+        return stored ? JSON.parse(stored) : [];
+    } catch {
+        return [];
+    }
+};
+
+const addRecentSearch = (term: string) => {
+    try {
+        const recent = getRecentSearches().filter(s => s.toLowerCase() !== term.toLowerCase());
+        recent.unshift(term);
+        localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(recent.slice(0, MAX_RECENT)));
+    } catch {
+        // ignore
+    }
+};
 
 export default function SearchResultsPage() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const query = searchParams.get("q") || "";
     const [searchTerm, setSearchTerm] = useState(query);
+    const [recentSearches, setRecentSearches] = useState<string[]>([]);
+
+    useEffect(() => {
+        setRecentSearches(getRecentSearches());
+    }, []);
+
+    // Save the search when a query is executed
+    useEffect(() => {
+        if (query) {
+            addRecentSearch(query);
+            setRecentSearches(getRecentSearches());
+        }
+    }, [query]);
+
+    const removeRecentSearch = (term: string) => {
+        const updated = getRecentSearches().filter(s => s !== term);
+        localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(updated));
+        setRecentSearches(updated);
+    };
 
     const highlightText = (text: string, term: string) => {
         if (!term || !text) return text;
@@ -89,19 +131,54 @@ export default function SearchResultsPage() {
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                         <p className="text-gray-500 italic">Searching the legal database...</p>
                     </div>
-                ) : !query ? (
-                    <div className="text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
-                        <p className="text-gray-500">Enter a keyword above to start searching.</p>
-                    </div>
+                    ) : !query ? (
+                        <div>
+                            {/* Recent Searches */}
+                            {recentSearches.length > 0 && (
+                                <div className="mb-8">
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <Clock className="h-4 w-4 text-gray-400" />
+                                        <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider">Recent Searches</h3>
+                                    </div>
+                                    <div className="flex flex-wrap gap-2">
+                                        {recentSearches.map((term) => (
+                                            <div key={term} className="group flex items-center gap-1 bg-gray-50 border border-gray-200 rounded-full px-3 py-1.5 hover:bg-blue-50 hover:border-blue-200 transition-colors">
+                                                <button
+                                                    onClick={() => {
+                                                        setSearchTerm(term);
+                                                        router.push(`/user/search?q=${encodeURIComponent(term)}`);
+                                                    }}
+                                                    className="text-sm text-gray-700 group-hover:text-blue-700 font-medium"
+                                                >
+                                                    {term}
+                                                </button>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        removeRecentSearch(term);
+                                                    }}
+                                                    className="text-gray-300 hover:text-red-500 transition-colors"
+                                                >
+                                                    <X className="h-3 w-3" />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                            <div className="text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                                <p className="text-gray-500">Enter a keyword above to start searching.</p>
+                            </div>
+                        </div>
                 ) : searchResults?.data?.length === 0 ? (
                     <div className="text-center py-20 bg-gray-50 rounded-2xl">
-                        <p className="text-gray-900 font-bold text-xl mb-2">No results found for "{query}"</p>
+                        <p className="text-gray-900 font-bold text-xl mb-2">{`No results found for "${query}"`}</p>
                         <p className="text-gray-500">Try using more general keywords or section numbers.</p>
                     </div>
                 ) : (
                     <>
                         <p className="text-sm text-gray-500 mb-4">
-                            Found {searchResults?.meta?.total || 0} results for "{query}"
+                            {`Found ${searchResults?.meta?.total || 0} results for "${query}"`}
                         </p>
                         <div className="grid gap-4">
                             {searchResults?.data?.map((result: any) => (

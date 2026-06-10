@@ -18,10 +18,18 @@ export const paymentApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ["User", "Chapters", "Chapter", "Section"],
         }),
+        getMyPaymentHistory: builder.query({
+            query: () => ({
+                url: "/payment/my-payment-history",
+                method: "GET",
+            }),
+            providesTags: ["Transactions"],
+        }),
     }),
 });
 
 export const {
     useCreateSubscriptionIntentMutation,
     useConfirmPaymentMutation,
+    useGetMyPaymentHistoryQuery,
 } = paymentApi;

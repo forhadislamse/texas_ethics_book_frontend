@@ -6,9 +6,11 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Loader2, Trash2, Edit2, X, Save, Camera } from "lucide-react";
+import { Loader2, Trash2, Edit2, X, Save, Camera, ShieldCheck, CalendarDays, BadgeCheck, CreditCard } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,12 +20,23 @@ export default function ProfilePage() {
     const dispatch = useAppDispatch();
     const router = useRouter();
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: userData, isLoading, isError } = useGetMeQuery(undefined, { skip: !token }) as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const user = userData?.data;
     
-    const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
-    const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation();
-    const [logoutMutation] = useLogoutMutation();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation() as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [updateUser, { isLoading: isUpdating }] = useUpdateUserMutation() as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [logoutMutation] = useLogoutMutation() as any;
+
+    // Subscription status
+    const subscriptionExpiresAt = user?.subscriptionExpiresAt ? new Date(user.subscriptionExpiresAt) : null;
+    const isSubscribed = user?.isSubscribed;
+    const plan = user?.plan;
+    const isActive = isSubscribed && subscriptionExpiresAt && subscriptionExpiresAt > new Date();
 
     // Edit states
     const [isEditing, setIsEditing] = useState(false);
@@ -32,12 +45,13 @@ export default function ProfilePage() {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
+    // Sync user data into form fields when data loads
     useEffect(() => {
         if (user) {
             setFullName(user.fullName || "");
             setPhone(user.phone || "");
         }
-    }, [user]);
+    }, [user?.fullName, user?.phone]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -69,6 +83,7 @@ export default function ProfilePage() {
             setIsEditing(false);
             setSelectedFile(null);
             setPreviewUrl(null);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (err: any) {
             toast.error(err?.data?.message || "Failed to update profile");
         }
@@ -87,6 +102,7 @@ export default function ProfilePage() {
                 }
                 dispatch(logout());
                 router.push("/login");
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (err: any) {
                 toast.error(err?.data?.message || "Failed to delete account");
             }
@@ -224,10 +240,6 @@ export default function ProfilePage() {
                                         <span className="text-sm text-gray-400">Phone Number</span>
                                         <span className="text-sm font-bold text-gray-700">{user.phone || "Not provided"}</span>
                                     </div>
-                                    {/* <div className="flex items-center justify-between py-3 border-b border-gray-50">
-                                        <span className="text-sm text-gray-400">Gender</span>
-                                        <span className="text-sm font-bold text-gray-700">{user.gender}</span>
-                                    </div> */}
                                     <div className="flex items-center justify-between py-3 border-b border-gray-50">
                                         <span className="text-sm text-gray-400">Join Date</span>
                                         <span className="text-sm font-bold text-gray-700">{new Date(user.createdAt).toLocaleDateString()}</span>
@@ -235,8 +247,57 @@ export default function ProfilePage() {
                                 </div>
                             </div>
 
+                            {/* Subscription Section */}
                             <div className="space-y-6">
-                                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500">Read Carefully</h3>
+                                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#0D7C84]">My Subscription</h3>
+                                <div className="p-6 border border-gray-100 bg-gray-50/30 rounded-2xl space-y-4">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <ShieldCheck className="h-4 w-4 text-[#0D7C84]" />
+                                            <span className="text-sm font-bold text-gray-900">{plan?.name || "Free Plan"}</span>
+                                        </div>
+                                        {isActive ? (
+                                            <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 font-medium text-[10px]">
+                                                Active
+                                            </Badge>
+                                        ) : (
+                                            <Badge variant="outline" className="bg-gray-50 text-gray-500 border-gray-200 font-medium text-[10px]">
+                                                {plan?.price === 0 ? "Free" : "Inactive"}
+                                            </Badge>
+                                        )}
+                                    </div>
+                                    {plan && (
+                                        <div className="text-sm text-gray-500">
+                                            ${plan.price}{plan.duration === 'unlimited' ? '' : `/${plan.duration === 'yearly' ? 'yr' : 'mo'}`}
+                                        </div>
+                                    )}
+                                    {isActive && subscriptionExpiresAt && (
+                                        <div className="flex items-center gap-2 text-xs text-gray-500">
+                                            <CalendarDays className="h-3 w-3" />
+                                            Renews: {subscriptionExpiresAt.toLocaleDateString()}
+                                        </div>
+                                    )}
+                                    {plan?.features && plan.features.length > 0 && (
+                                        <div className="pt-2 space-y-1.5">
+                                            {plan.features.slice(0, 3).map((f: string, idx: number) => (
+                                                <div key={idx} className="flex items-center gap-2 text-xs text-gray-600">
+                                                    <BadgeCheck className="h-3 w-3 text-emerald-500 flex-shrink-0" />
+                                                    {f}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                    <Link href="/user">
+                                        <Button variant="link" className="text-[#0D7C84] text-xs p-0 h-auto font-bold">
+                                            Manage Subscription <CreditCard className="h-3 w-3 ml-1" />
+                                        </Button>
+                                    </Link>
+                                </div>
+                            </div>
+
+                            {/* Danger Zone */}
+                            <div className="space-y-6">
+                                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500">Danger Zone</h3>
                                 <div className="p-6 border border-red-50 bg-red-50/20 rounded-2xl">
                                     <p className="text-xs text-red-400 mb-6 leading-relaxed">
                                         Deleting your account is permanent. All your data and active subscriptions will be removed immediately.
@@ -259,4 +320,3 @@ export default function ProfilePage() {
         </div>
     );
 }
-

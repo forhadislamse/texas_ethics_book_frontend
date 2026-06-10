@@ -16,7 +16,8 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import placeholder from "@/src/assets/placeholders/image_placeholder.png";
-import { ChevronsUpDown, LogOut } from "lucide-react";
+import { ChevronsUpDown, LogOut, ShieldCheck } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 import { useGetMeQuery, useLogoutMutation } from "@/redux/api/authApi";
 import { logout } from "@/redux/features/authSlice";
@@ -114,6 +115,11 @@ export function NavUser() {
                   {data?.data?.email || "No email"}
                 </span>
               </div>
+              {data?.data?.isSubscribed && data?.data?.plan && (
+                <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[8px] font-bold uppercase tracking-wider px-1.5 py-0 h-auto leading-tight ml-auto">
+                  {data.data.plan.name === "Free Plan" || data.data.plan.price === 0 ? "Free" : "Pro"}
+                </Badge>
+              )}
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
@@ -148,6 +154,11 @@ export function NavUser() {
                   <span className="truncate text-xs">
                     {data?.data?.email || "No email"}
                   </span>
+                  {data?.data?.isSubscribed && data?.data?.plan && (
+                    <span className="text-[9px] font-bold text-emerald-600 mt-1">
+                      {data.data.plan.name === "Free Plan" || data.data.plan.price === 0 ? "Free Plan" : `${data.data.plan.name}`}
+                    </span>
+                  )}
                 </div>
               </div>
             </DropdownMenuLabel>

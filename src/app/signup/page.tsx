@@ -1,11 +1,7 @@
-import RegisterPage from "@/components/module/Auth/SignUp";
+import AuthPage from "@/components/module/Auth/AuthToggle";
 
 const page = () => {
-    return (
-        <div>
-            <RegisterPage />
-        </div>
-    );
+  return <AuthPage />;
 };
 
 export default page;

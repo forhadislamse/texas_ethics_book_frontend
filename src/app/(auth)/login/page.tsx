@@ -1,11 +1,7 @@
-import LoginPage from "@/components/module/Auth/Login";
+import AuthPage from "@/components/module/Auth/AuthToggle";
 
 const page = () => {
-  return (
-    <div>
-      <LoginPage />
-    </div>
-  );
+  return <AuthPage />;
 };
 
 export default page;

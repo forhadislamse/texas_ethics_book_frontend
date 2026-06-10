@@ -24,7 +24,7 @@ type LoginFormValues = {
   password: string;
 };
 interface CustomJwtPayload extends JwtPayload {
-  role: string; // Add the role property here
+  role: string;
 }
 
 const schema = z.object({
@@ -51,7 +51,6 @@ const LoginPage = () => {
 
       if (res.success) {
         const token = res.data.token;
-
         setCookie(token);
 
         const decodedUser = jwtDecode<CustomJwtPayload>(token);
@@ -62,7 +61,6 @@ const LoginPage = () => {
         };
 
         dispatch(setUser({ token, user }));
-
         toast.success(res.message || "Login successful!");
 
         if (user?.role === "ADMIN") {
@@ -81,11 +79,13 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="flex w-full max-w-6xl items-center gap-28 px-4">
-        <div className="hidden md:flex flex-1 items-center justify-center bg-[#0c1421] rounded-lg min-h-[90vh] overflow-hidden">
+        <div className="hidden md:flex flex-1 items-center justify-center bg-[#0c1421] rounded-lg min-h-[85vh]">
           <Image
             src={darkLegalBg}
             alt="Legal Library"
-            className="object-cover h-full w-full"
+            width={450}
+            height={450}
+            className="object-contain"
             priority
           />
         </div>
@@ -94,15 +94,15 @@ const LoginPage = () => {
           <Link href="/">
             <Image
               src={logoImg}
-              alt="Logo"
+              alt="BPC Logo"
               width={150}
               height={50}
-              className="mx-auto mb-4 rounded-2xl"
+              className="mx-auto mb-4"
             />
           </Link>
           <h1 className="text-center text-2xl font-semibold">Welcome Back</h1>
           <p className="mb-6 mt-3 text-center text-sm text-gray-600">
-            Sign in to your Tennis Club account
+            Sign in to your account
           </p>
           <FormProvider {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -141,7 +141,7 @@ const LoginPage = () => {
             </form>
           </FormProvider>
           <p className="mt-6 text-center text-sm text-gray-600">
-            Don&apos;t have an account?{" "}
+            Don't have an account?{" "}
             <Link href="/register" className="text-black hover:underline">
               Sign Up
             </Link>

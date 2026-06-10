@@ -12,8 +12,10 @@ import { useAppSelector } from "@/redux/hooks";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useGetMeQuery } from "@/redux/api/authApi";
+import { useState } from "react";
 
 export default function LandingPage() {
+    const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
     const { data: plans, isLoading } = useGetAllPlansQuery(undefined);
     const token = useAppSelector((state) => state.auth.token);
     const { data: userData } = useGetMeQuery(undefined, { skip: !token });
@@ -262,21 +264,74 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* Footer */}
-            <footer className="py-12 bg-white border-t border-gray-100">
-                <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
-                    <div className=" font-bold text-2xl tracking-tighter text-[#1E293B]">
-                        CATES <span className="text-blue-600">LEGAL</span>
+            {/* FAQ Section */}
+            <section className="py-24 bg-white relative overflow-hidden">
+                <div className="container mx-auto px-6 max-w-4xl">
+                    <div className="text-center mb-16">
+                        <h2 className="text-4xl font-bold text-gray-900 mb-4 uppercase">Frequently Asked Questions</h2>
+                        <p className="text-gray-600 max-w-2xl mx-auto italic text-lg">
+                            Everything you need to know about the Texas Ethics Laws digital guide.
+                        </p>
                     </div>
-                    <div className="text-gray-400 text-sm italic">
-                        © 2026 Cates Legal Group. All rights reserved. Texas Ethics Laws 9th Edition.
-                    </div>
-                    <div className="flex gap-6">
-                        <Link href="/terms" className="text-gray-400 hover:text-blue-600 text-sm underline decoration-gray-200">Terms</Link>
-                        <Link href="/privacy" className="text-gray-400 hover:text-blue-600 text-sm underline decoration-gray-200">Privacy</Link>
+
+                    <div className="space-y-4">
+                        {[
+                            {
+                                question: "How does the subscription work?",
+                                answer: "Once you subscribe, you get instant access to the entire Texas Ethics Laws 9th Edition digital guide. You can read online anytime, search across all chapters, bookmark pages, and track your study progress. Subscriptions auto-renew monthly or yearly depending on your chosen plan. You can cancel anytime from your account settings."
+                            },
+                            {
+                                question: "How does pricing work?",
+                                answer: "We offer flexible pricing plans to suit your needs — monthly and yearly subscriptions. The yearly plan gives you a discount compared to the monthly rate. We also offer a free plan with limited access so you can explore the guide before committing. All paid plans include full access to all chapters, search, bookmarks, and reading progress tracking."
+                            },
+                            {
+                                question: "What is this Texas Ethics Laws book?",
+                                answer: "The Texas Ethics Laws 9th Edition is a comprehensive digital practice guide covering over 550 pages of annotated ethics rules, statutes, and case law. It is designed for Texas legal professionals and students preparing for the Texas Ethics exam. The guide includes structured chapters, integrated legal references, and a powerful search feature to help you find information quickly."
+                            },
+                            {
+                                question: "Can I access the guide on mobile devices?",
+                                answer: "Yes! The digital guide is fully responsive and works on desktop, tablet, and mobile devices. You can study anywhere, anytime with an internet connection. Simply log in to your account and access the reader from any device."
+                            },
+                            {
+                                question: "Is there a free trial available?",
+                                answer: "Yes, we offer a free plan that gives you limited access to the guide. This allows you to explore the content, test the search functionality, and see if the guide meets your needs before upgrading to a paid subscription."
+                            },
+                            {
+                                question: "How do I cancel my subscription?",
+                                answer: "You can cancel your subscription anytime from your account dashboard. Go to your profile settings and manage your subscription. Your access will continue until the end of the current billing period."
+                            }
+                        ].map((faq, i) => {
+                            const isOpen = openFaqIndex === i;
+                            return (
+                                <div key={i} className="border border-gray-200 rounded-2xl overflow-hidden transition-all duration-300 hover:border-gray-300">
+                                    <button
+                                        onClick={() => setOpenFaqIndex(isOpen ? null : i)}
+                                        className="w-full flex items-center justify-between px-8 py-6 text-left bg-white hover:bg-gray-50 transition-colors"
+                                    >
+                                        <span className="text-lg font-bold text-gray-900">{faq.question}</span>
+                                        <svg
+                                            className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </button>
+                                    <div
+                                        className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
+                                    >
+                                        <div className="px-8 pb-6 text-gray-600 leading-relaxed border-t border-gray-100 pt-4">
+                                            {faq.answer}
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
-            </footer>
+            </section>
+
         </div>
     );
 }

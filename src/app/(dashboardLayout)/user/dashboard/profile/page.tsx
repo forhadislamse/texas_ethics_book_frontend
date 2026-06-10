@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { useGetMeQuery, useDeleteUserMutation, useLogoutMutation, useUpdateUserMutation } from "@/redux/api/authApi";
@@ -44,6 +45,14 @@ export default function ProfilePage() {
     const [phone, setPhone] = useState("");
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+    // Populate form fields when user data loads
+    useEffect(() => {
+        if (user) {
+            setFullName(user.fullName || "");
+            setPhone(user.phone || "");
+        }
+    }, [user?.fullName, user?.phone]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];

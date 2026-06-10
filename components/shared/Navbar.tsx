@@ -29,7 +29,7 @@ const Navbar = () => {
                     
                     <div className="flex items-center gap-2 italic">
                         <Phone size={14} className="text-blue-400" />
-                        <span>Call Today : 512-426-4593</span>
+                        <span>Call Today : +64 210-823-3301</span>
                     </div>
 
                     <div className="hidden md:block">

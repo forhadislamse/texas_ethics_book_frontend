@@ -1,29 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
-import { useGetAllSectionsQuery, useDeleteSectionMutation, useGetAllChaptersQuery } from "@/redux/api/guideApi";
-import { Search, Plus, Pencil, Trash2 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { format } from "date-fns";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Edit2, Filter, Plus, Search, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -33,34 +15,133 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  useDeleteSectionMutation,
+  useGetAllChaptersQuery,
+  useGetAllSectionsQuery,
+} from "@/redux/api/guideApi";
+
+function Pagination({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}) {
+  if (totalPages <= 1) return null;
+
+  return (
+    <div className="flex items-center gap-2">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+        disabled={currentPage === 1}
+        className="rounded-lg text-gray-500"
+      >
+        &lt;
+      </Button>
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        <Button
+          key={page}
+          variant={page === currentPage ? "default" : "outline"}
+          size="sm"
+          onClick={() => onPageChange(page)}
+          className={`h-8 w-8 rounded-lg p-0 ${
+            page === currentPage
+              ? "bg-[#007A8A] text-white hover:bg-[#006674]"
+              : "text-gray-500"
+          }`}
+        >
+          {page}
+        </Button>
+      ))}
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+        disabled={currentPage === totalPages}
+        className="rounded-lg text-gray-500"
+      >
+        &gt;
+      </Button>
+    </div>
+  );
+}
 
 export default function SectionsManagementPage() {
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterChapterId, setFilterChapterId] = useState<string>("all");
-  const [page, setPage] = useState(1);
-  const limit = 10;
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+  const [filterChapterId, setFilterChapterId] = useState("");
+  const [sectionToDelete, setSectionToDelete] = useState<string | null>(null);
+  const itemsPerPage = 10;
 
-  // Fetch Chapters for the Filter Dropdown
-  const { data: chaptersData } = useGetAllChaptersQuery({});
-  const chapters = chaptersData?.data || [];
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+      setCurrentPage(1);
+    }, 500);
 
-  // Fetch Sections
-  const { data: response, isLoading, error } = useGetAllSectionsQuery({
-    searchTerm,
-    chapterId: filterChapterId !== "all" ? filterChapterId : undefined,
-    page,
-    limit,
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  const { data: chaptersData, isLoading: isLoadingChapters } =
+    useGetAllChaptersQuery({
+      page: 1,
+      limit: 1000,
+    });
+
+  const chapters = useMemo(() => chaptersData?.data || [], [chaptersData]);
+  const selectedChapter = chapters.find(
+    (chapter: any) => chapter.id === filterChapterId,
+  );
+
+  const { data, isLoading, error, refetch } = useGetAllSectionsQuery({
+    page: currentPage,
+    limit: itemsPerPage,
+    chapterId: filterChapterId || undefined,
+    searchTerm: debouncedSearchTerm || undefined,
   });
 
-  const [deleteSection] = useDeleteSectionMutation();
-  const [sectionToDelete, setSectionToDelete] = useState<string | null>(null);
+  const [deleteSection, { isLoading: isDeleting }] =
+    useDeleteSectionMutation();
 
-  if (isLoading) {
+  const sections: any[] = data?.data || [];
+  const meta = data?.meta;
+  const totalPages = meta ? Math.ceil(meta.total / meta.limit) : 0;
+  const safePage = totalPages > 0 ? Math.min(currentPage, totalPages) : currentPage;
+
+  const clearFilters = () => {
+    setSearchTerm("");
+    setDebouncedSearchTerm("");
+    setFilterChapterId("");
+    setCurrentPage(1);
+  };
+
+  const handleDelete = async () => {
+    if (!sectionToDelete) return;
+
+    try {
+      await deleteSection(sectionToDelete).unwrap();
+      toast.success("Section deleted successfully!");
+      setSectionToDelete(null);
+      refetch();
+    } catch (err: any) {
+      toast.error(err?.data?.message || "Failed to delete section");
+    }
+  };
+
+  if (isLoading || isLoadingChapters) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#006064]"></div>
-          <p className="text-sm text-muted-foreground">Loading sections...</p>
+      <div className="min-h-screen bg-gray-50/50 p-8">
+        <div className="flex h-64 items-center justify-center">
+          <div className="text-center">
+            <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-[#007A8A]" />
+            <p className="mt-4 text-gray-600">Loading sections...</p>
+          </div>
         </div>
       </div>
     );
@@ -68,216 +149,300 @@ export default function SectionsManagementPage() {
 
   if (error) {
     return (
-      <div className="p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-600 text-sm">
-          ⚠️ Error loading sections. Please try again later.
+      <div className="p-8">
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+          Error loading sections. Please try again later.
         </div>
       </div>
     );
   }
 
-  const sections: any[] = response?.data ?? [];
-  const meta = response?.meta ?? { total: 0, page: 1, limit: 10 };
-  const totalPages = Math.ceil(meta.total / (meta.limit || 10));
-
-  const startRecord = (meta.page - 1) * meta.limit + 1;
-  const endRecord = Math.min(meta.page * meta.limit, meta.total);
-
-  const handleDelete = async () => {
-    if (!sectionToDelete) return;
-    try {
-      await deleteSection(sectionToDelete).unwrap();
-      toast.success("Section deleted successfully");
-      setSectionToDelete(null);
-    } catch (err: any) {
-      toast.error(err?.data?.message || "Failed to delete section");
-    }
-  };
-
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
-      {/* Page Header */}
-      <div className="flex items-center justify-between gap-4 flex-wrap">
+    <div className="min-h-screen bg-gray-50/50 p-8">
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Sections</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Manage all sections of the legal guide
+          <h1 className="text-xl font-medium text-gray-950">Sections</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Manage all sections of the legal guide.
           </p>
         </div>
-        <Link href="/admin/sections/create">
-          <Button className="bg-[#006064] hover:bg-[#00838F] text-white px-6 rounded-full">
-            <Plus className="mr-2 h-4 w-4" /> Add New Section
-          </Button>
+        <Link
+          href="/admin/sections/create"
+          className="flex items-center gap-2 rounded-full bg-[#007A8A] px-6 py-3 font-semibold text-white shadow transition-all hover:bg-[#006674]"
+        >
+          <Plus size={20} /> Add New Section
         </Link>
       </div>
 
-      <Card className="border border-gray-100 shadow-sm bg-white overflow-hidden">
-        <div className="p-4 border-b border-gray-100 flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-            <Input
-              placeholder="Search sections by name or number..."
-              className="pl-10 py-6 text-base border-gray-200 focus:border-[#006064] focus:ring-1 focus:ring-[#006064] rounded-lg w-full"
-              value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setPage(1);
-              }}
-            />
-          </div>
-          <div className="w-full sm:w-[280px]">
-            <Select 
-              value={filterChapterId} 
-              onValueChange={(val) => {
-                setFilterChapterId(val);
-                setPage(1);
-              }}
-            >
-              <SelectTrigger className="py-6 border-gray-200 rounded-lg bg-gray-50/50">
-                <SelectValue placeholder="Filter by Chapter" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Chapters</SelectItem>
-                {chapters.map((ch: any) => (
-                  <SelectItem key={ch.id} value={ch.id}>
-                    Ch {ch.number}: {ch.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-gray-50/50 hover:bg-gray-50/50 border-gray-100">
-                <TableHead className="font-medium text-sm text-gray-700 h-14 px-6">Section No.</TableHead>
-                <TableHead className="font-medium text-sm text-gray-700 h-14">Section Title</TableHead>
-                <TableHead className="font-medium text-sm text-gray-700 h-14">Chapter no.</TableHead>
-                <TableHead className="font-medium text-sm text-gray-700 h-14">Last updated</TableHead>
-                <TableHead className="font-medium text-sm text-gray-700 h-14 text-right pr-6">Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {sections.length > 0 ? (
-                sections.map((section: any) => (
-                  <TableRow
-                    key={section.id}
-                    className="hover:bg-gray-50/50 border-b border-gray-100 transition-colors"
-                  >
-                    <TableCell className="px-6 py-4">
-                      <span className="text-sm font-medium text-gray-900">{section.number}</span>
-                    </TableCell>
-                    <TableCell className="py-4">
-                      <span className="text-sm text-gray-900 uppercase">
-                        {section.title}
-                      </span>
-                    </TableCell>
-                    <TableCell className="py-4">
-                      <span className="text-sm text-gray-600">{section.chapter?.number || "N/A"}</span>
-                    </TableCell>
-                    <TableCell className="py-4 text-sm text-gray-600">
-                      {section.updatedAt
-                        ? format(new Date(section.updatedAt), "MMM dd, yyyy")
-                        : "N/A"}
-                    </TableCell>
-                    <TableCell className="text-right pr-6 py-4">
-                      <div className="flex items-center justify-end gap-2">
-                        <Link href={`/admin/sections/edit/${section.id}`}>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-gray-400 hover:text-gray-900 hover:bg-gray-100 h-8 w-8"
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                        </Link>
-                        
-                        <Dialog open={sectionToDelete === section.id} onOpenChange={(isOpen) => isOpen ? setSectionToDelete(section.id) : setSectionToDelete(null)}>
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="text-red-400 hover:text-red-600 hover:bg-red-50 h-8 w-8"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Are you sure?</DialogTitle>
-                              <DialogDescription>
-                                This will permanently delete section {section.number}. This action cannot be undone.
-                              </DialogDescription>
-                            </DialogHeader>
-                            <DialogFooter>
-                              <Button variant="outline" onClick={() => setSectionToDelete(null)}>Cancel</Button>
-                              <Button variant="destructive" onClick={handleDelete} className="bg-red-600 hover:bg-red-700 text-white">Delete</Button>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={5}
-                    className="text-center py-16 text-muted-foreground text-sm"
-                  >
-                    {searchTerm
-                      ? `No sections found matching "${searchTerm}".`
-                      : "No sections found."}
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+      <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
+        <div className="border-b border-gray-100 p-6">
+          <div className="flex w-full flex-col gap-4 md:flex-row">
+            <div className="relative flex-1">
+              <Search
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                size={20}
+              />
+              <input
+                type="text"
+                placeholder="Search by section number or title..."
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-12 pr-4 text-gray-600 shadow-sm transition-all focus:border-[#007A8A] focus:outline-none focus:ring-2 focus:ring-[#007A8A]/10"
+              />
+            </div>
 
-          {/* Pagination Footer */}
-          {meta.total > 0 && (
-            <div className="flex items-center justify-between p-4 border-t border-gray-100">
-              <div className="text-sm text-gray-500">
-                Showing {startRecord}-{endRecord} from {meta.total}
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  className="rounded-lg text-gray-500"
-                >
-                  &lt;
-                </Button>
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                    <Button
-                      key={p}
-                      variant={p === page ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setPage(p)}
-                      className={`w-8 h-8 p-0 rounded-lg ${p === page ? "bg-[#006064] text-white hover:bg-[#00838F]" : "text-gray-500"}`}
-                    >
-                      {p}
-                    </Button>
-                  ))}
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                  className="rounded-lg text-gray-500"
-                >
-                  &gt;
-                </Button>
-              </div>
+            <div className="relative w-full md:w-[340px]">
+              <Filter
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
+                size={18}
+              />
+              <select
+                className="w-full cursor-pointer appearance-none rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-10 text-gray-600 shadow-sm transition-all focus:border-[#007A8A] focus:outline-none focus:ring-2 focus:ring-[#007A8A]/10"
+                value={filterChapterId}
+                onChange={(event) => {
+                  setFilterChapterId(event.target.value);
+                  setCurrentPage(1);
+                }}
+              >
+                <option value="">All Chapters</option>
+                {chapters.map((chapter: any) => (
+                  <option key={chapter.id} value={chapter.id}>
+                    Chapter {chapter.number}: {chapter.title}
+                  </option>
+                ))}
+              </select>
+              <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+                v
+              </span>
+            </div>
+
+            {(searchTerm || filterChapterId) && (
+              <button
+                onClick={clearFilters}
+                className="flex items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-gray-200 px-5 py-2.5 text-sm font-medium text-[#007A8A] transition-all hover:bg-gray-50 hover:text-[#006674]"
+              >
+                Clear Filters
+              </button>
+            )}
+          </div>
+
+          {(searchTerm || filterChapterId) && (
+            <div className="mt-4 flex flex-wrap gap-2 pt-2">
+              {searchTerm && (
+                <span className="flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-1.5 text-sm text-blue-700">
+                  <Search size={14} />
+                  Search: {searchTerm}
+                  <button
+                    onClick={() => setSearchTerm("")}
+                    className="ml-1 font-bold hover:text-blue-900"
+                  >
+                    x
+                  </button>
+                </span>
+              )}
+              {selectedChapter && (
+                <span className="flex items-center gap-2 rounded-lg bg-green-50 px-3 py-1.5 text-sm text-green-700">
+                  <Filter size={14} />
+                  Chapter {selectedChapter.number}:{" "}
+                  {selectedChapter.title.substring(0, 40)}
+                  {selectedChapter.title.length > 40 ? "..." : ""}
+                  <button
+                    onClick={() => setFilterChapterId("")}
+                    className="ml-1 font-bold hover:text-green-900"
+                  >
+                    x
+                  </button>
+                </span>
+              )}
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+
+        {meta && (
+          <div className="border-b border-gray-100 bg-gray-50/30 px-6 py-3">
+            <p className="text-sm text-gray-600">
+              Showing{" "}
+              <span className="font-semibold text-gray-900">{meta.total}</span>{" "}
+              sections
+              {selectedChapter && ` in Chapter ${selectedChapter.number}`}
+              {searchTerm && ` matching "${searchTerm}"`}
+            </p>
+          </div>
+        )}
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="bg-[#F6F6F6]">
+                <th className="px-8 py-5 font-semibold text-gray-700">
+                  Section No.
+                </th>
+                <th className="px-8 py-5 font-semibold text-gray-700">
+                  Section Title
+                </th>
+                <th className="px-8 py-5 text-center font-semibold text-gray-700">
+                  Chapter
+                </th>
+                <th className="px-8 py-5 font-semibold text-gray-700">
+                  Chapter Title
+                </th>
+                <th className="px-8 py-5 font-semibold text-gray-700">
+                  Last Updated
+                </th>
+                <th className="py-5 pl-8 pr-12 text-right font-semibold text-gray-700">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {sections.map((section) => (
+                <tr
+                  key={section.id}
+                  className="transition-colors hover:bg-gray-50/50"
+                >
+                  <td className="px-8 py-5">
+                    <span className="font-mono text-sm font-bold text-gray-900">
+                      {section.number}
+                    </span>
+                  </td>
+                  <td className="px-8 py-5">
+                    <div className="font-medium text-gray-900" title={section.title}>
+                      {section.title}
+                    </div>
+                  </td>
+                  <td className="px-8 py-5 text-center">
+                    <span className="rounded-full bg-[#007A8A]/10 px-3 py-1 text-sm font-semibold text-[#007A8A]">
+                      {section.chapter?.number || "N/A"}
+                    </span>
+                  </td>
+                  <td className="max-w-xs px-8 py-5">
+                    <div
+                      className="truncate text-gray-600"
+                      title={section.chapter?.title}
+                    >
+                      {section.chapter?.title || "N/A"}
+                    </div>
+                  </td>
+                  <td className="whitespace-nowrap px-8 py-5 text-sm text-gray-500">
+                    {section.updatedAt
+                      ? new Date(section.updatedAt).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          },
+                        )
+                      : "-"}
+                  </td>
+                  <td className="py-5 pl-8 pr-10 text-right">
+                    <div className="flex justify-end gap-2">
+                      <Link
+                        href={`/admin/sections/edit/${section.id}`}
+                        className="rounded-lg p-2 text-gray-400 transition-all hover:bg-[#007A8A]/5 hover:text-[#007A8A]"
+                      >
+                        <Edit2 size={18} />
+                      </Link>
+
+                      <Dialog
+                        open={sectionToDelete === section.id}
+                        onOpenChange={(isOpen) =>
+                          setSectionToDelete(isOpen ? section.id : null)
+                        }
+                      >
+                        <DialogTrigger asChild>
+                          <button
+                            className="cursor-pointer rounded-lg p-2 text-red-400 transition-all hover:bg-red-50 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-50"
+                            disabled={isDeleting}
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </DialogTrigger>
+                        <DialogContent className="rounded-3xl border-none text-center shadow-2xl">
+                          <DialogHeader>
+                            <DialogTitle className="w-full text-center text-xl font-bold text-gray-900">
+                              Are you absolutely sure?
+                            </DialogTitle>
+                            <DialogDescription className="text-center text-[15px] text-gray-500">
+                              This will permanently delete Section{" "}
+                              <span className="font-bold text-gray-900">
+                                {section.number}
+                              </span>{" "}
+                              - {section.title} from Chapter{" "}
+                              <span className="font-bold text-gray-900">
+                                {section.chapter?.number || "N/A"}
+                              </span>
+                              . This action cannot be undone.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <DialogFooter className="mt-4">
+                            <Button
+                              variant="outline"
+                              onClick={() => setSectionToDelete(null)}
+                              className="rounded-xl border-gray-200 px-6 py-6 font-semibold hover:bg-gray-50"
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              onClick={handleDelete}
+                              className="rounded-xl bg-red-500 px-6 py-6 font-semibold text-white hover:bg-red-600"
+                            >
+                              Delete Section
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {sections.length === 0 && (
+          <div className="py-16 text-center">
+            <Search size={48} className="mx-auto mb-4 text-gray-400" />
+            <p className="text-lg text-gray-500">
+              {searchTerm || filterChapterId
+                ? "No sections found matching your criteria"
+                : "No sections available"}
+            </p>
+            {(searchTerm || filterChapterId) && (
+              <button
+                onClick={clearFilters}
+                className="mt-4 inline-flex items-center gap-2 font-medium text-[#007A8A] hover:text-[#006674]"
+              >
+                Clear all filters
+              </button>
+            )}
+            {!searchTerm && !filterChapterId && (
+              <Link
+                href="/admin/sections/create"
+                className="mt-4 inline-block font-medium text-[#007A8A] hover:text-[#006674]"
+              >
+                Create your first section
+              </Link>
+            )}
+          </div>
+        )}
+
+        {meta && meta.total > itemsPerPage && (
+          <div className="flex flex-col items-center justify-between gap-4 border-t border-gray-200 bg-gray-50/30 px-8 py-6 sm:flex-row">
+            <div className="text-sm text-gray-600">
+              Showing {(safePage - 1) * meta.limit + 1}-
+              {Math.min(safePage * meta.limit, meta.total)} of{" "}
+              <span className="font-semibold text-gray-900">{meta.total}</span>{" "}
+              sections
+            </div>
+            <Pagination
+              currentPage={safePage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

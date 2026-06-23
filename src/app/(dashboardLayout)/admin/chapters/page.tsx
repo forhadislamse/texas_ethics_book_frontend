@@ -1,22 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState } from "react";
-import { useGetAllChaptersQuery, useDeleteChapterMutation } from "@/redux/api/guideApi";
-import { Search, Plus, Pencil, Trash2 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { format } from "date-fns";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Edit2, Plus, Search, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -26,27 +15,112 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  useDeleteChapterMutation,
+  useGetAllChaptersQuery,
+} from "@/redux/api/guideApi";
+
+function Pagination({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}) {
+  if (totalPages <= 1) return null;
+
+  return (
+    <div className="flex items-center gap-2">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+        disabled={currentPage === 1}
+        className="rounded-lg text-gray-500"
+      >
+        &lt;
+      </Button>
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+        <Button
+          key={page}
+          variant={page === currentPage ? "default" : "outline"}
+          size="sm"
+          onClick={() => onPageChange(page)}
+          className={`h-8 w-8 rounded-lg p-0 ${
+            page === currentPage
+              ? "bg-[#007A8A] text-white hover:bg-[#006674]"
+              : "text-gray-500"
+          }`}
+        >
+          {page}
+        </Button>
+      ))}
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+        disabled={currentPage === totalPages}
+        className="rounded-lg text-gray-500"
+      >
+        &gt;
+      </Button>
+    </div>
+  );
+}
 
 export default function ChaptersManagementPage() {
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const [page, setPage] = useState(1);
-  const limit = 10;
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+  const [chapterToDelete, setChapterToDelete] = useState<string | null>(null);
+  const itemsPerPage = 10;
 
-  const { data: response, isLoading, error } = useGetAllChaptersQuery({
-    searchTerm,
-    page,
-    limit,
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+      setCurrentPage(1);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  const { data, isLoading, error, refetch } = useGetAllChaptersQuery({
+    page: currentPage,
+    limit: itemsPerPage,
+    searchTerm: debouncedSearchTerm || undefined,
   });
 
-  const [deleteChapter] = useDeleteChapterMutation();
-  const [chapterToDelete, setChapterToDelete] = useState<string | null>(null);
+  const [deleteChapter, { isLoading: isDeleting }] =
+    useDeleteChapterMutation();
+
+  const chapters: any[] = data?.data || [];
+  const meta = data?.meta;
+  const totalPages = meta ? Math.ceil(meta.total / meta.limit) : 0;
+  const safePage = totalPages > 0 ? Math.min(currentPage, totalPages) : currentPage;
+
+  const handleDelete = async () => {
+    if (!chapterToDelete) return;
+
+    try {
+      await deleteChapter(chapterToDelete).unwrap();
+      toast.success("Chapter deleted successfully!");
+      setChapterToDelete(null);
+      refetch();
+    } catch (err: any) {
+      toast.error(err?.data?.message || "Failed to delete chapter");
+    }
+  };
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#006064]"></div>
-          <p className="text-sm text-muted-foreground">Loading chapters...</p>
+      <div className="min-h-screen bg-gray-50/50 p-8">
+        <div className="flex h-64 items-center justify-center">
+          <div className="text-center">
+            <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-[#007A8A]" />
+            <p className="mt-4 text-gray-600">Loading chapters...</p>
+          </div>
         </div>
       </div>
     );
@@ -54,195 +128,185 @@ export default function ChaptersManagementPage() {
 
   if (error) {
     return (
-      <div className="p-6">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-600 text-sm">
-          ⚠️ Error loading chapters. Please try again later.
+      <div className="p-8">
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+          Error loading chapters. Please try again later.
         </div>
       </div>
     );
   }
 
-  const chapters: any[] = response?.data ?? [];
-  const meta = response?.meta ?? { total: 0, page: 1, limit: 10 };
-  const totalPages = Math.ceil(meta.total / meta.limit);
-
-  const startRecord = (meta.page - 1) * meta.limit + 1;
-  const endRecord = Math.min(meta.page * meta.limit, meta.total);
-
-  const handleDelete = async () => {
-    if (!chapterToDelete) return;
-    try {
-      await deleteChapter(chapterToDelete).unwrap();
-      toast.success("Chapter deleted successfully");
-      setChapterToDelete(null);
-    } catch (err: any) {
-      toast.error(err?.data?.message || "Failed to delete chapter");
-    }
-  };
-
   return (
-    <div className="p-6 space-y-6 max-w-7xl mx-auto">
-      {/* Page Header */}
-      <div className="flex items-center justify-between gap-4 flex-wrap">
+    <div className="min-h-screen bg-gray-50/50 p-8">
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Chapters</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Manage all chapters of the legal guide and their hierarchical content structure.
+          <h1 className="text-xl font-medium text-gray-950">Chapters</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Manage all chapters of the legal guide and their hierarchical
+            content structure.
           </p>
         </div>
-        <Link href="/admin/chapters/create">
-          <Button className="bg-[#006064] hover:bg-[#00838F] text-white px-6 rounded-full">
-            <Plus className="mr-2 h-4 w-4" /> Add New Chapter
-          </Button>
+        <Link
+          href="/admin/chapters/create"
+          className="flex items-center gap-2 rounded-full bg-[#007A8A] px-6 py-3 font-semibold text-white shadow transition-all hover:bg-[#006674]"
+        >
+          <Plus size={20} /> Add New Chapter
         </Link>
       </div>
 
-      <Card className="border border-gray-100 shadow-sm bg-white overflow-hidden">
-        <div className="p-4 border-b border-gray-100">
+      <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
+        <div className="p-6">
           <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-            <Input
-              placeholder="Search chapters by title or keyword..."
-              className="pl-10 py-6 text-base border-gray-200 focus:border-[#006064] focus:ring-1 focus:ring-[#006064] rounded-lg"
+            <Search
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+              size={20}
+            />
+            <input
+              type="text"
+              placeholder="Search chapters by title or number..."
               value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setPage(1);
-              }}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              className="w-full rounded-2xl border border-gray-100 bg-gray-50/50 py-3.5 pl-12 pr-4 transition-all focus:border-[#007A8A] focus:outline-none focus:ring-2 focus:ring-[#007A8A]/10"
             />
           </div>
         </div>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-gray-50/50 hover:bg-gray-50/50 border-gray-100">
-                <TableHead className="font-medium text-sm text-gray-700 h-14 px-6">Chapter No.</TableHead>
-                <TableHead className="font-medium text-sm text-gray-700 h-14">Chapter Title</TableHead>
-                <TableHead className="font-medium text-sm text-gray-700 h-14">Total Sections</TableHead>
-                <TableHead className="font-medium text-sm text-gray-700 h-14">Last updated</TableHead>
-                <TableHead className="font-medium text-sm text-gray-700 h-14 text-right pr-6">Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {chapters.length > 0 ? (
-                chapters.map((chapter: any) => (
-                  <TableRow
-                    key={chapter.id}
-                    className="hover:bg-gray-50/50 border-b border-gray-100 transition-colors"
-                  >
-                    <TableCell className="px-6 py-4">
-                      <span className="text-sm text-gray-600">{chapter.number}</span>
-                    </TableCell>
-                    <TableCell className="py-4">
-                      <span className="text-sm font-medium text-gray-900 uppercase">
-                        {chapter.title}
-                      </span>
-                    </TableCell>
-                    <TableCell className="py-4">
-                      <span className="text-sm text-gray-600">{chapter._count?.sections || 0}</span>
-                    </TableCell>
-                    <TableCell className="py-4 text-sm text-gray-600">
-                      {chapter.updatedAt
-                        ? format(new Date(chapter.updatedAt), "MMM dd, yyyy")
-                        : "N/A"}
-                    </TableCell>
-                    <TableCell className="text-right pr-6 py-4">
-                      <div className="flex items-center justify-end gap-2">
-                        <Link href={`/admin/chapters/edit/${chapter.id}`}>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-gray-400 hover:text-gray-900 hover:bg-gray-100 h-8 w-8"
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                        </Link>
-                        
-                        <Dialog open={chapterToDelete === chapter.id} onOpenChange={(isOpen) => isOpen ? setChapterToDelete(chapter.id) : setChapterToDelete(null)}>
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="text-red-400 hover:text-red-600 hover:bg-red-50 h-8 w-8"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Are you sure?</DialogTitle>
-                              <DialogDescription>
-                                This will permanently delete chapter {chapter.number} and all of its associated sections and references. This action cannot be undone.
-                              </DialogDescription>
-                            </DialogHeader>
-                            <DialogFooter>
-                              <Button variant="outline" onClick={() => setChapterToDelete(null)}>Cancel</Button>
-                              <Button variant="destructive" onClick={handleDelete} className="bg-red-600 hover:bg-red-700 text-white">Delete</Button>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={5}
-                    className="text-center py-16 text-muted-foreground text-sm"
-                  >
-                    {searchTerm
-                      ? `No chapters found matching "${searchTerm}".`
-                      : "No chapters found."}
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
 
-          {/* Pagination Footer */}
-          {meta.total > 0 && (
-            <div className="flex items-center justify-between p-4 border-t border-gray-100">
-              <div className="text-sm text-gray-500">
-                Showing {startRecord}-{endRecord} from {meta.total}
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  className="rounded-lg text-gray-500"
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="bg-[#F6F6F6]">
+                <th className="px-8 py-5 font-normal">Chapter No.</th>
+                <th className="px-8 py-5 font-normal">Chapter Title</th>
+                <th className="px-8 py-5 text-center font-normal">
+                  Display Order
+                </th>
+                <th className="px-8 py-5 font-normal">Last updated</th>
+                <th className="py-5 pl-8 pr-12 text-right font-normal">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {chapters.map((chapter) => (
+                <tr
+                  key={chapter.id}
+                  className="border-b border-gray-200 transition-colors hover:bg-gray-50/50"
                 >
-                  &lt;
-                </Button>
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                    <Button
-                      key={p}
-                      variant={p === page ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setPage(p)}
-                      className={`w-8 h-8 p-0 rounded-lg ${p === page ? "bg-[#006064] text-white hover:bg-[#00838F]" : "text-gray-500"}`}
-                    >
-                      {p}
-                    </Button>
-                  ))}
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                  className="rounded-lg text-gray-500"
-                >
-                  &gt;
-                </Button>
-              </div>
+                  <td className="px-8 py-6 font-medium">{chapter.number}</td>
+                  <td className="max-w-md px-8 py-6">
+                    <div className="truncate" title={chapter.title}>
+                      {chapter.title}
+                    </div>
+                  </td>
+                  <td className="px-8 py-6 text-center">
+                    {chapter.order ?? "-"}
+                  </td>
+                  <td className="px-8 py-6">
+                    {chapter.updatedAt
+                      ? new Date(chapter.updatedAt).toLocaleDateString(
+                          "en-US",
+                          {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          },
+                        )
+                      : "-"}
+                  </td>
+                  <td className="py-6 pl-8 pr-10 text-right">
+                    <div className="flex justify-end gap-2">
+                      <Link
+                        href={`/admin/chapters/edit/${chapter.id}`}
+                        className="rounded-lg p-2.5 text-gray-400 transition-all hover:bg-[#007A8A]/5 hover:text-[#007A8A]"
+                      >
+                        <Edit2 size={18} />
+                      </Link>
+
+                      <Dialog
+                        open={chapterToDelete === chapter.id}
+                        onOpenChange={(isOpen) =>
+                          setChapterToDelete(isOpen ? chapter.id : null)
+                        }
+                      >
+                        <DialogTrigger asChild>
+                          <button
+                            className="cursor-pointer rounded-lg p-2.5 text-red-400 transition-all hover:bg-red-50 hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-50"
+                            disabled={isDeleting}
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </DialogTrigger>
+                        <DialogContent className="rounded-3xl border-none text-center shadow-2xl">
+                          <DialogHeader>
+                            <DialogTitle className="w-full text-center text-xl font-bold text-gray-900">
+                              Are you absolutely sure?
+                            </DialogTitle>
+                            <DialogDescription className="text-center text-[15px] text-gray-500">
+                              This will permanently delete Chapter{" "}
+                              <span className="font-bold text-gray-900">
+                                #{chapter.number}
+                              </span>{" "}
+                              - {chapter.title}. This action cannot be undone.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <DialogFooter className="mt-4">
+                            <Button
+                              variant="outline"
+                              onClick={() => setChapterToDelete(null)}
+                              className="rounded-xl border-gray-100 px-6 py-6 font-semibold hover:bg-gray-50"
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              onClick={handleDelete}
+                              className="rounded-xl bg-red-500 px-6 py-6 font-semibold text-white hover:bg-red-600"
+                            >
+                              Delete Chapter
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {chapters.length === 0 && (
+          <div className="py-12 text-center">
+            <p className="text-gray-500">
+              {debouncedSearchTerm
+                ? `No chapters found matching "${debouncedSearchTerm}"`
+                : "No chapters available"}
+            </p>
+            {!debouncedSearchTerm && (
+              <Link
+                href="/admin/chapters/create"
+                className="mt-4 inline-block font-medium text-[#007A8A] hover:text-[#006674]"
+              >
+                Create your first chapter
+              </Link>
+            )}
+          </div>
+        )}
+
+        {meta && meta.total > 0 && (
+          <div className="flex flex-col items-center justify-between gap-4 border-t border-gray-200 px-8 py-6 sm:flex-row">
+            <div className="text-sm text-gray-500">
+              Showing {(safePage - 1) * meta.limit + 1}-
+              {Math.min(safePage * meta.limit, meta.total)} of {meta.total}
+              {debouncedSearchTerm && " search results"}
             </div>
-          )}
-        </CardContent>
-      </Card>
+            <Pagination
+              currentPage={safePage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

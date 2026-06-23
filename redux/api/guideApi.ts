@@ -3,9 +3,10 @@ import { baseApi } from "./baseApi";
 export const guideApi = baseApi.injectEndpoints({
     endpoints: (builder) => ({
         getAllChapters: builder.query({
-            query: () => ({
+            query: (params?: { page?: number; limit?: number; searchTerm?: string }) => ({
                 url: "/guide/chapters",
                 method: "GET",
+                params,
             }),
             providesTags: ["Chapters"],
         }),

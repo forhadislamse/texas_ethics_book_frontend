@@ -32,6 +32,36 @@ function Pagination({
 }) {
   if (totalPages <= 1) return null;
 
+  const getPageNumbers = () => {
+    const pages: (number | string)[] = [];
+    const showEllipsis = totalPages > 7;
+
+    if (!showEllipsis) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    pages.push(1);
+
+    if (currentPage > 3) {
+      pages.push("...");
+    }
+
+    const start = Math.max(2, currentPage - 1);
+    const end = Math.min(totalPages - 1, currentPage + 1);
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+
+    if (currentPage < totalPages - 2) {
+      pages.push("...");
+    }
+
+    pages.push(totalPages);
+
+    return pages;
+  };
+
   return (
     <div className="flex items-center gap-2">
       <Button
@@ -41,23 +71,32 @@ function Pagination({
         disabled={currentPage === 1}
         className="rounded-lg text-gray-500"
       >
-        &lt;
+        Prev
       </Button>
-      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-        <Button
-          key={page}
-          variant={page === currentPage ? "default" : "outline"}
-          size="sm"
-          onClick={() => onPageChange(page)}
-          className={`h-8 w-8 rounded-lg p-0 ${
-            page === currentPage
-              ? "bg-[#007A8A] text-white hover:bg-[#006674]"
-              : "text-gray-500"
-          }`}
-        >
-          {page}
-        </Button>
-      ))}
+      {getPageNumbers().map((page, index) =>
+        typeof page === "string" ? (
+          <span
+            key={`ellipsis-${index}`}
+            className="flex h-8 w-8 items-center justify-center text-gray-500"
+          >
+            ...
+          </span>
+        ) : (
+          <Button
+            key={page}
+            variant={page === currentPage ? "default" : "outline"}
+            size="sm"
+            onClick={() => onPageChange(page)}
+            className={`h-8 w-8 rounded-lg p-0 ${
+              page === currentPage
+                ? "bg-[#007A8A] text-white hover:bg-[#006674]"
+                : "text-gray-500"
+            }`}
+          >
+            {page}
+          </Button>
+        ),
+      )}
       <Button
         variant="outline"
         size="sm"
@@ -65,7 +104,7 @@ function Pagination({
         disabled={currentPage === totalPages}
         className="rounded-lg text-gray-500"
       >
-        &gt;
+        Next
       </Button>
     </div>
   );

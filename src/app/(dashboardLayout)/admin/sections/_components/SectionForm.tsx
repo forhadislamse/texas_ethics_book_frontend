@@ -182,9 +182,9 @@ export default function SectionForm({
                             <SelectValue placeholder="Select a chapter" />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent>
+                        <SelectContent className="w-[500px] max-h-[300px]">
                           {chapters.map((chapter: any) => (
-                            <SelectItem key={chapter.id} value={chapter.id}>
+                            <SelectItem key={chapter.id} value={chapter.id} className="whitespace-normal">
                               {chapter.code ? `${chapter.code} - ` : ""}CHAPTER {chapter.number}. {chapter.title}
                             </SelectItem>
                           ))}

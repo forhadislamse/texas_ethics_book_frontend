@@ -141,7 +141,7 @@ export default function SectionsManagementPage() {
   const { data, isLoading, error, refetch } = useGetAllSectionsQuery({
     page: currentPage,
     limit: itemsPerPage,
-    chapterId: filterChapterId || undefined,
+    chapterNumber: selectedChapter?.number || undefined,
     searchTerm: debouncedSearchTerm || undefined,
   });
 

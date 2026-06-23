@@ -11,7 +11,7 @@ export const guideApi = baseApi.injectEndpoints({
             providesTags: ["Chapters"],
         }),
         getAllSections: builder.query({
-            query: (params: { page?: number; limit?: number; searchTerm?: string; chapterId?: string }) => ({
+            query: (params: { page?: number; limit?: number; searchTerm?: string; chapterNumber?: string }) => ({
                 url: "/guide/sections",
                 method: "GET",
                 params,

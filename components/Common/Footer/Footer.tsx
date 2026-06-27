@@ -157,6 +157,8 @@
 
 // export default Footer;
 
+"use client";
+
 import { useState, FormEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";

@@ -145,7 +145,7 @@ export default function AdminDashboardPage() {
                         className="w-full h-full rounded-t-sm transition-all duration-500 ease-out"
                         style={{
                           background:
-                            item.revenue === maxRevenue
+                            item.revenue > 0
                               ? "linear-gradient(to top, #006064, #00ACC1)"
                               : "#CBD5E1",
                         }}

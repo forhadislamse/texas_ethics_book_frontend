@@ -6,6 +6,12 @@ import { Search, CheckCircle, XCircle, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Table,
   TableBody,
   TableCell,
@@ -21,6 +27,7 @@ import { Button } from "@/components/ui/button";
 export default function UserManagementPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
   const limit = 10;
 
   const { data: response, isLoading, error } = useGetAllUsersQuery({
@@ -172,6 +179,7 @@ export default function UserManagementPage() {
                         variant="ghost"
                         size="sm"
                         className="text-[#006064] hover:text-[#006064] hover:bg-[#e0f7fa] text-xs"
+                        onClick={() => setSelectedUser(user)}
                       >
                         View Profile
                       </Button>
@@ -229,6 +237,61 @@ export default function UserManagementPage() {
           </Button>
         </div>
       )}
+
+      {/* User Profile Dialog */}
+      <Dialog open={!!selectedUser} onOpenChange={(open) => !open && setSelectedUser(null)}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>User Profile</DialogTitle>
+          </DialogHeader>
+          {selectedUser && (
+            <div className="flex flex-col gap-4 py-2">
+              <div className="flex items-center gap-4">
+                <Avatar className="h-16 w-16 border border-gray-100">
+                  <AvatarImage src={selectedUser.profileImage} />
+                  <AvatarFallback className="text-xl bg-blue-50 text-blue-700 font-semibold">
+                    {selectedUser.fullName?.charAt(0)?.toUpperCase() || "U"}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <h3 className="font-semibold text-lg text-gray-900">{selectedUser.fullName}</h3>
+                  <p className="text-sm text-muted-foreground">{selectedUser.email}</p>
+                  <Badge variant="outline" className="mt-1 capitalize">{selectedUser.role?.toLowerCase()}</Badge>
+                </div>
+              </div>
+              <div className="grid gap-2 text-sm mt-2">
+                <div className="flex justify-between border-b pb-2">
+                  <span className="text-muted-foreground">Joined Date</span>
+                  <span className="font-medium">
+                    {selectedUser.createdAt ? format(new Date(selectedUser.createdAt), "MMM dd, yyyy") : "N/A"}
+                  </span>
+                </div>
+                <div className="flex justify-between border-b pb-2">
+                  <span className="text-muted-foreground">Plan</span>
+                  <span className="font-medium text-emerald-600">
+                    {selectedUser.plan?.name || "Free"} 
+                    {selectedUser.plan?.price ? ` ($${selectedUser.plan.price})` : ""}
+                  </span>
+                </div>
+                <div className="flex justify-between border-b pb-2">
+                  <span className="text-muted-foreground">Status</span>
+                  <span className="font-medium">
+                    {selectedUser.isSubscribed ? "Active Subscriber" : "Inactive"}
+                  </span>
+                </div>
+                {selectedUser.isSubscribed && (
+                  <div className="flex justify-between border-b pb-2">
+                    <span className="text-muted-foreground">Expires At</span>
+                    <span className="font-medium">
+                      {selectedUser.subscriptionExpiresAt ? format(new Date(selectedUser.subscriptionExpiresAt), "MMM dd, yyyy") : "N/A"}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

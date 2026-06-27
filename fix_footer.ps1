@@ -1,0 +1,1 @@
+='C:/Users/Muhammad Forhad/projects/texas_ethics_book_frontend/components/Common/Footer/Footer.tsx';=Get-Content  -Raw;= -replace 'catch \(error\)','catch (error: any)';Set-Content  ;Write-Host 'done'

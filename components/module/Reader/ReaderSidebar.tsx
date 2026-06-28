@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import {
     DropdownMenu,
@@ -76,10 +76,45 @@ export default function ReaderSidebar() {
         router.push("/");
     };
 
-    const filteredChapters = chapters?.data?.filter((chapter: any) =>
-        chapter.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        chapter.number.toString().includes(searchQuery)
-    );
+    const filteredChapters = useMemo(() => {
+        return chapters?.data?.filter((chapter: any) => {
+            if (!searchQuery) return true;
+            
+            const matchesChapter = 
+                chapter.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                chapter.number?.toString().includes(searchQuery);
+            
+            // Also check if any section matches the search query
+            const matchesSection = chapter.sections?.some((section: any) =>
+                section.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                section.number?.toString().includes(searchQuery)
+            );
+            
+            return matchesChapter || matchesSection;
+        });
+    }, [chapters?.data, searchQuery]);
+
+    // Auto-expand chapters when searching
+    useEffect(() => {
+        if (searchQuery && chapters?.data) {
+            const chapterIdsToExpand = chapters.data
+                .filter((chapter: any) => {
+                    const matchesChapter = 
+                        chapter.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        chapter.number?.toString().includes(searchQuery);
+                    const matchesSection = chapter.sections?.some((section: any) =>
+                        section.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        section.number?.toString().includes(searchQuery)
+                    );
+                    return matchesChapter || matchesSection;
+                })
+                .map((ch: any) => ch.id);
+            setExpandedChapters(chapterIdsToExpand);
+        } else if (!searchQuery) {
+            // Clear expanded chapters when search is cleared
+            setExpandedChapters([]);
+        }
+    }, [searchQuery, chapters?.data]);
 
     return (
         <aside className="w-80 h-screen border-r border-gray-100 bg-white flex flex-col fixed left-0 top-0 z-50 shadow-sm">
@@ -122,7 +157,7 @@ export default function ReaderSidebar() {
                         ))}
                     </div>
                 ) : (
-                    filteredChapters?.map((chapter: any) => {
+                    filteredChapters?.map((chapter: any, index: number) => {
                         const isExpanded = expandedChapters.includes(chapter.id);
                         const isChapterInView = params.id && chapter.sections.some((s: any) => s.id === params.id);
 
@@ -145,7 +180,15 @@ export default function ReaderSidebar() {
                                 {isExpanded && (
                                     <div className="mt-1 ml-4 border-l-2 border-gray-50 pl-2 py-1 space-y-0.5 animate-in slide-in-from-left-2 duration-200">
                                         {(() => {
-                                            const grouped = chapter.sections?.reduce((acc: any, section: any) => {
+                                            // Filter sections based on search query
+                                            const filteredSections = searchQuery 
+                                                ? chapter.sections?.filter((section: any) =>
+                                                    section.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                                    section.number?.toString().includes(searchQuery)
+                                                )
+                                                : chapter.sections;
+                                            
+                                            const grouped = filteredSections?.reduce((acc: any, section: any) => {
                                                 const sub = section.subChapter || "_NONE_";
                                                 if (!acc[sub]) acc[sub] = [];
                                                 acc[sub].push(section);
@@ -163,6 +206,20 @@ export default function ReaderSidebar() {
                                                     )}
                                                     {subSections.map((section: any) => {
                                                         const isActive = params.id === section.id;
+                                                        if (section.isLocked) {
+                                                            return (
+                                                                <div key={section.id} className={`group flex items-center gap-3 px-4 py-2 rounded-lg text-[13px] transition-all relative ${isActive
+                                                                        ? "bg-gray-100 text-gray-900 font-bold shadow-sm"
+                                                                        : "text-gray-400 cursor-not-allowed"
+                                                                    }`}>
+                                                                    <span className={`shrink-0 font-bold ${isActive ? "text-[#0F172A]" : "text-gray-300 font-mono text-[10px]"}`}>
+                                                                        {section.number}
+                                                                    </span>
+                                                                    <span className="truncate flex-1">{section.title}</span>
+                                                                    <Lock className="w-2.5 h-2.5 ml-auto text-gray-300" />
+                                                                </div>
+                                                            );
+                                                        }
                                                         return (
                                                             <Link
                                                                 key={section.id}

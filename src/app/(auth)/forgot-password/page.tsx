@@ -50,11 +50,11 @@ export default function ResetPassword() {
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
-      <div className="hidden lg:flex lg:w-1/2 relative">
+      <div className="hidden lg:flex lg:w-1/2 relative min-h-screen">
         <div
-          className="w-full h-full bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: "url('/images/otp.jpg')",
+            backgroundImage: "url('/dark_legal_library_bg.png')",
           }}
         ></div>
       </div>

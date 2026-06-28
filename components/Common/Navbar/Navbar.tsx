@@ -103,6 +103,9 @@
 // };
 
 // export default Navbar;
+
+
+
 "use client";
 
 import Link from "next/link";
@@ -131,7 +134,7 @@ const Navbar = () => {
     ];
 
     return (
-        <header className="w-full bg-white shadow-sm sticky top-0 z-50">
+        <header className="w-full bg-transparent sticky top-0 z-50">
             {/* Top Bar */}
             <div className="w-full bg-[#1E293B] text-white py-2 px-6">
                 <div className="container mx-auto flex justify-between items-center text-xs md:text-sm font-medium">
@@ -146,7 +149,7 @@ const Navbar = () => {
                     
                     <div className="flex items-center gap-2 italic">
                         <Phone size={14} className="text-blue-400" />
-                        <span>Call Today : +64 210-823-3301</span>
+                        <span>Call Today : +00 210-823-0000</span>
                     </div>
 
                     <div className="hidden md:block">
@@ -155,8 +158,8 @@ const Navbar = () => {
                 </div>
             </div>
 
-            {/* Main Navbar (সাদা ব্যাকগ্রাউন্ড যা ডার্ক ক্যাপসুলটিকে ফুটিয়ে তুলবে) */}
-            <nav className="w-full bg-white border-b border-gray-100 py-4">
+            {/* Main Navbar: ব্যাকগ্রাউন্ড সাদা থেকে সরিয়ে একদম ট্রান্সপারেন্ট (bg-transparent) করা হয়েছে */}
+            <nav className="w-full bg-transparent py-4">
                 <div className="container mx-auto px-6 flex justify-center items-center">
                     
                     {/* Dribbble Style: ONE SINGLE DARK CAPSULE FOR EVERYTHING */}

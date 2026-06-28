@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
@@ -109,7 +110,7 @@ export default function CheckoutForm({ clientSecret, orderId, planName, amount }
             <Button
                 type="submit"
                 disabled={!stripe || isProcessing}
-                className="w-full py-8 rounded-[1.5rem] bg-[#0F172A] hover:bg-gray-800 text-white font-black text-lg uppercase tracking-widest shadow-2xl shadow-blue-900/10 transition-all active:scale-[0.98]"
+                className="w-full py-8 rounded-3xl bg-[#0F172A] hover:bg-gray-800 text-white font-black text-lg uppercase tracking-widest shadow-2xl shadow-blue-900/10 transition-all active:scale-[0.98]"
             >
                 {isProcessing ? (
                     <div className="flex items-center gap-3">

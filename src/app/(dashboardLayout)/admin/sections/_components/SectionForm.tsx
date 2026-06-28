@@ -130,7 +130,7 @@ export default function SectionForm({
     };
     
     // Call the parent onSubmit
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     onSubmit(payload as any);
   };
 
@@ -190,7 +190,7 @@ export default function SectionForm({
                         </FormControl>
                         <SelectContent className="max-w-[calc(100vw-2rem)] md:max-w-[500px] max-h-[300px]">
                           {chapters.map((chapter: any) => (
-                            <SelectItem key={chapter.id} value={chapter.id} className="whitespace-normal break-words py-2">
+                            <SelectItem key={chapter.id} value={chapter.id} className="whitespace-normal wrap-break-word py-2">
                               {chapter.code ? `${chapter.code} - ` : ""}CHAPTER {chapter.number}. {chapter.title}
                             </SelectItem>
                           ))}

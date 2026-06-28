@@ -94,9 +94,9 @@ export default function ReaderSidebar() {
                         <span className="text-[9px] text-gray-400 font-bold uppercase tracking-[0.2em]">Legal Group</span>
                     </div>
                 </Link>
-                <button className="text-gray-400 hover:text-gray-600 transition-colors">
+                {/* <button className="text-gray-400 hover:text-gray-600 transition-colors">
                     <Menu className="w-5 h-5" />
-                </button>
+                </button> */}
             </div>
 
             {/* Search Section */}
@@ -200,8 +200,14 @@ export default function ReaderSidebar() {
                     <DropdownMenuTrigger asChild>
                         <div className="flex items-center gap-3 p-2 group cursor-pointer hover:bg-white hover:shadow-sm rounded-xl transition-all">
                             <div className="w-10 h-10 rounded-full border-2 border-white shadow-sm overflow-hidden flex items-center justify-center bg-white relative">
-                                <Image src="/logo2.png" alt="User" width={40} height={40} className="object-cover scale-110 opacity-80" />
-                                <div className="absolute inset-0 bg-blue-600/10" />
+                                {user?.profileImage ? (
+                                    <Image src={user.profileImage} alt="User" width={40} height={40} className="object-cover" />
+                                ) : (
+                                    <>
+                                        <Image src="/logo2.png" alt="User" width={40} height={40} className="object-cover scale-110 opacity-80" />
+                                        <div className="absolute inset-0 bg-blue-600/10" />
+                                    </>
+                                )}
                             </div>
                             <div className="flex-1 min-w-0">
                                 <span className="block font-bold text-gray-900 text-sm truncate leading-none mb-1">

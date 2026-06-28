@@ -16,6 +16,7 @@ import { useChangePasswordMutation } from "@/redux/api/authApi";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2, Eye, EyeOff } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -108,8 +109,20 @@ export default function ChangePassword() {
   const isFormValid = form.formState.isValid && !isSamePassword;
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-10 bg-gray-50">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-xl p-6 sm:p-8">
+    <div className="relative min-h-screen flex items-center justify-center px-4 py-10 bg-[#0F172A]">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/dark_legal_library_bg.png"
+          alt="Legal Library Background"
+          fill
+          className="object-cover opacity-30"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0F172A]/80 to-[#0F172A]/90"></div>
+      </div>
+
+      <div className="relative z-10 w-full max-w-md bg-white shadow-lg rounded-xl p-6 sm:p-8">
         <div className="text-center mb-6">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
             Change Password

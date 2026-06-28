@@ -4,11 +4,11 @@ const PrivacyPage = () => {
   return (
     <div className="min-h-screen bg-white">
       <div className="container mx-auto px-6 py-24 max-w-4xl">
-        <Link href="/" className="text-blue-600 hover:text-blue-700 text-sm mb-8 inline-block">&larr; Back to Home</Link>
+        <Link href="/register" className="text-blue-600 hover:text-blue-700 text-sm mb-8 inline-block">&larr; Back to Register</Link>
         <h1 className="text-4xl font-bold text-gray-900 mb-8 uppercase">Privacy Policy</h1>
         
         <div className="prose max-w-none text-gray-600 space-y-6">
-          <p className="text-lg font-medium text-gray-800">Last Updated: January 2026</p>
+          <p className="text-lg font-medium text-gray-800">Last Updated: June 2026</p>
 
           <h2 className="text-2xl font-bold text-gray-900 mt-10 mb-4">1. Information We Collect</h2>
           <p>We collect information you provide directly to us, including:</p>

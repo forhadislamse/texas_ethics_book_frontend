@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useGetAllChaptersQuery } from "@/redux/api/guideApi";
@@ -107,7 +108,7 @@ export default function GuideReaderPage() {
                 ))}
             </div>
 
-            <section className="bg-[#0F172A] rounded-[3rem] p-12 md:p-20 text-white relative overflow-hidden shadow-2xl shadow-gray-200">
+            {/* <section className="bg-[#0F172A] rounded-[3rem] p-12 md:p-20 text-white relative overflow-hidden shadow-2xl shadow-gray-200">
                 <div className="absolute right-0 bottom-0 w-96 h-96 bg-blue-600/10 rounded-tl-full -mr-32 -mb-32 blur-3xl" />
 
                 <div className="relative z-10 max-w-2xl space-y-8">
@@ -128,7 +129,7 @@ export default function GuideReaderPage() {
                         </button>
                     </div>
                 </div>
-            </section>
+            </section> */}
         </div>
     );
 }

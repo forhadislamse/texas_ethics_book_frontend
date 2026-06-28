@@ -1,3 +1,4 @@
+
 "use client";
 
 import { z } from "zod";
@@ -128,6 +129,7 @@ export default function SectionForm({
     };
     
     // Call the parent onSubmit
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onSubmit(payload as any);
   };
 
@@ -170,21 +172,24 @@ export default function SectionForm({
                   )}
                 />
 
+                {/* চ্যাপ্টার সিলেক্ট উইডথ ওভারফ্লো ফিক্সড সেকশন */}
                 <FormField
                   control={form.control}
                   name="chapterId"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="w-full min-w-0">
                       <FormLabel className="font-semibold text-gray-900">Select Chapter</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isEdit}>
                         <FormControl>
-                          <SelectTrigger className="bg-white">
-                            <SelectValue placeholder="Select a chapter" />
+                          <SelectTrigger className="bg-white w-full max-w-full overflow-hidden">
+                            <span className="block truncate text-left w-full">
+                              <SelectValue placeholder="Select a chapter" />
+                            </span>
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent className="w-[500px] max-h-[300px]">
+                        <SelectContent className="max-w-[calc(100vw-2rem)] md:max-w-[500px] max-h-[300px]">
                           {chapters.map((chapter: any) => (
-                            <SelectItem key={chapter.id} value={chapter.id} className="whitespace-normal">
+                            <SelectItem key={chapter.id} value={chapter.id} className="whitespace-normal break-words py-2">
                               {chapter.code ? `${chapter.code} - ` : ""}CHAPTER {chapter.number}. {chapter.title}
                             </SelectItem>
                           ))}

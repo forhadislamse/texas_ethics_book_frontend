@@ -41,25 +41,40 @@ export default function LandingPage() {
                 <div className="container mx-auto px-6 relative z-20">
                     <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-20">
                         <div className="lg:w-1/2 text-left flex flex-col justify-center">
-                            <h1 className="text-4xl lg:text-6xl font-bold text-white  leading-tight mb-8 uppercase tracking-tight">
+                            <motion.h1 
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.8, delay: 0.2 }}
+                                className="text-4xl lg:text-6xl font-bold text-white  leading-tight mb-8 uppercase tracking-tight"
+                            >
                                 Texas Ethics Laws — <br className="hidden lg:block" />
                                 <span className="text-white">The Complete Legal <br className="hidden lg:block" /> Practice Guide</span>
-                            </h1>
-                            <p className="text-xl text-gray-300 mb-12 leading-relaxed max-w-xl font-light italic">
+                            </motion.h1>
+                            <motion.p 
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.8, delay: 0.4 }}
+                                className="text-xl text-gray-300 mb-12 leading-relaxed max-w-xl font-light italic"
+                            >
                                 Master over 550 pages of annotated ethics rules, statutes, and case law in one comprehensive, searchable digital volume. Built for the modern Texas practitioner.
-                            </p>
-                            <div className="flex flex-wrap gap-5">
+                            </motion.p>
+                            <motion.div 
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.8, delay: 0.6 }}
+                                className="flex flex-wrap gap-5"
+                            >
                                 <Link href="#pricing">
-                                    <Button size="lg" className="bg-[#0D7C84] hover:bg-[#0B656B] text-white px-10 py-7 rounded-full text-xl font-bold transition-all shadow-xl hover:shadow-[#0D7C84]/40 uppercase tracking-widest">
+                                    <Button size="lg" className="bg-[#0D7C84] hover:bg-[#0B656B] text-white px-10 py-7 rounded-full text-xl font-bold transition-all shadow-xl hover:shadow-[#0D7C84]/40 uppercase tracking-widest hover:scale-105 active:scale-95">
                                         Start Subscription
                                     </Button>
                                 </Link>
                                 <Link href="/user/reader">
-                                    <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-[#0F172A] bg-transparent px-10 py-7 rounded-full text-xl font-bold transition-all uppercase tracking-widest">
+                                    <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-[#0F172A] bg-transparent px-10 py-7 rounded-full text-xl font-bold transition-all uppercase tracking-widest hover:scale-105 active:scale-95">
                                         Preview the Guide
                                     </Button>
                                 </Link>
-                            </div>
+                            </motion.div>
                         </div>
 
                         <div className="hidden lg:flex lg:w-1/2 justify-center lg:justify-end">
@@ -73,17 +88,27 @@ export default function LandingPage() {
                                 <div className="absolute -inset-4 bg-[#0D7C84]/20 rounded-full blur-3xl"></div>
 
                                 <div className="relative bg-white/5 p-2 rounded-2xl backdrop-blur-sm border border-white/10 shadow-2xl">
-                                    <Image
-                                        src={BookCover}
-                                        alt="Texas Ethics Laws Book Cover"
-                                        width={700}
-                                        height={960}
-                                        className="rounded-xl shadow-2xl object-cover hover:scale-[1.01] transition-transform duration-500"
-                                        priority
-                                    />
+                                    <motion.div
+                                        animate={{ y: [0, -10, 0] }}
+                                        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                                    >
+                                        <Image
+                                            src={BookCover}
+                                            alt="Texas Ethics Laws Book Cover"
+                                            width={700}
+                                            height={960}
+                                            className="rounded-xl shadow-2xl object-cover hover:scale-[1.02] transition-transform duration-500"
+                                            priority
+                                        />
+                                    </motion.div>
 
                                     {/* Floating Badge - Fixed to Corner */}
-                                    <div className="absolute bottom-4 -right-8 bg-white p-2 rounded-2xl shadow-xl border border-gray-100 flex items-center gap-3 shadow-blue-500/10 z-30">
+                                    <motion.div 
+                                        initial={{ opacity: 0, scale: 0.5 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ delay: 1, type: "spring" }}
+                                        className="absolute bottom-4 -right-8 bg-white p-2 rounded-2xl shadow-xl border border-gray-100 flex items-center gap-3 shadow-blue-500/10 z-30"
+                                    >
                                         <div className="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-blue-600">
                                             <BadgeCheck />
                                         </div>
@@ -91,7 +116,7 @@ export default function LandingPage() {
                                             <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest leading-none mb-1">Authentic</p>
                                             <p className="text-sm font-bold text-gray-900 leading-none">9th Edition</p>
                                         </div>
-                                    </div>
+                                    </motion.div>
                                 </div>
                             </motion.div>
                         </div>
@@ -136,10 +161,16 @@ export default function LandingPage() {
                 </div>
 
                 <div className="container mx-auto px-6 relative z-10">
-                    <div className="text-center mb-16">
+                    <motion.div 
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-100px" }}
+                        transition={{ duration: 0.6 }}
+                        className="text-center mb-16"
+                    >
                         <h2 className="text-4xl font-bold text-gray-900 mb-4 uppercase">A Smarter Way to Explore Legal Ethics</h2>
                         <p className="text-gray-600 max-w-2xl mx-auto italic text-lg whitespace-pre-line">Find the information you need faster with powerful search, structured chapters, and integrated legal references.</p>
-                    </div>
+                    </motion.div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {[
@@ -148,13 +179,20 @@ export default function LandingPage() {
                             { icon: <ShieldCheck />, title: "Legal Sources", desc: "Each section includes references to relevant statutes, ethics opinions, and legal resources." },
                             { icon: <CreditCard />, title: "Accessible Anywhere", desc: "Secure access to the guide from desktop, tablet, or mobile devices." }
                         ].map((feature, i) => (
-                            <div key={i} className="p-8 rounded-2xl border border-gray-100 bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all hover:-translate-y-1">
-                                <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6 mx-auto">
+                            <motion.div 
+                                key={i} 
+                                initial={{ opacity: 0, y: 40 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: "-50px" }}
+                                transition={{ duration: 0.5, delay: i * 0.15 }}
+                                className="p-8 rounded-2xl border border-gray-100 bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all hover:-translate-y-2 group cursor-default"
+                            >
+                                <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6 mx-auto group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
                                     {feature.icon}
                                 </div>
                                 <h3 className="text-xl font-bold mb-3 uppercase">{feature.title}</h3>
                                 <p className="text-gray-500 text-sm leading-relaxed">{feature.desc}</p>
-                            </div>
+                            </motion.div>
                         ))}
                     </div>
                 </div>
@@ -163,10 +201,17 @@ export default function LandingPage() {
             {/* Pricing Section */}
             <section id="pricing" className="py-24 bg-[#F8FAFC]">
                 <div className="container mx-auto px-6 text-center">
-                    <h2 className="text-4xl font-bold text-gray-900 mb-4  uppercase">Simple Access Plans for the Digital Guide</h2>
-                    <p className="text-gray-600 mb-16 max-w-2xl mx-auto text-lg italic">
-                        Choose the plan that fits your needs and get instant access to the Texas Ethics Laws digital practice guide.
-                    </p>
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-100px" }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        <h2 className="text-4xl font-bold text-gray-900 mb-4  uppercase">Simple Access Plans for the Digital Guide</h2>
+                        <p className="text-gray-600 mb-16 max-w-2xl mx-auto text-lg italic">
+                            Choose the plan that fits your needs and get instant access to the Texas Ethics Laws digital practice guide.
+                        </p>
+                    </motion.div>
 
                     {isLoading ? (
                         <div className="flex justify-center items-center py-20">
@@ -174,12 +219,16 @@ export default function LandingPage() {
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                            {plans?.data?.map((plan: any) => (
-                                <div
+                            {plans?.data?.map((plan: any, idx: number) => (
+                                <motion.div
                                     key={plan.id}
+                                    initial={{ opacity: 0, y: 50 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, margin: "-50px" }}
+                                    transition={{ duration: 0.5, delay: idx * 0.15, type: "spring", stiffness: 100 }}
                                     className={`p-10 rounded-3xl border flex flex-col h-full relative transition-all duration-300 ${plan.isPopular
-                                        ? "bg-[#1E293B] text-white border-blue-500 shadow-2xl ring-4 ring-blue-500/20 scale-105 z-10"
-                                        : "bg-white text-gray-900 border-gray-100 shadow-sm hover:shadow-md"
+                                        ? "bg-[#1E293B] text-white border-blue-500 shadow-2xl ring-4 ring-blue-500/20 scale-105 z-10 hover:scale-[1.08]"
+                                        : "bg-white text-gray-900 border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-2"
                                         }`}
                                 >
                                     {plan.isPopular && (
@@ -246,7 +295,7 @@ export default function LandingPage() {
                                             Subscribe Now
                                         </Button>
                                     )}
-                                </div>
+                                </motion.div>
                             ))}
                         </div>
                     )}
@@ -256,24 +305,36 @@ export default function LandingPage() {
             {/* CTA Section */}
             <section className="py-20 bg-blue-600 relative overflow-hidden">
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-                <div className="container mx-auto px-6 text-center relative z-10">
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8 }}
+                    className="container mx-auto px-6 text-center relative z-10"
+                >
                     <h2 className="text-3xl lg:text-5xl font-bold text-white mb-8  uppercase">Unlock the complete digital guide today.</h2>
                     <Link href="#pricing">
-                        <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-50 px-10 py-8 rounded-2xl text-xl font-bold uppercase tracking-widest transition-all shadow-2xl">START YOUR SUBSCRIPTION</Button>
+                        <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-50 px-10 py-8 rounded-2xl text-xl font-bold uppercase tracking-widest transition-all shadow-2xl hover:scale-105 active:scale-95">START YOUR SUBSCRIPTION</Button>
                     </Link>
                     <p className="text-blue-100 mt-8 font-light italic text-lg">Trusted by Texas Legal Professionals.</p>
-                </div>
+                </motion.div>
             </section>
 
             {/* FAQ Section */}
             <section className="py-24 bg-white relative overflow-hidden">
                 <div className="container mx-auto px-6 max-w-4xl">
-                    <div className="text-center mb-16">
+                    <motion.div 
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: "-100px" }}
+                        transition={{ duration: 0.6 }}
+                        className="text-center mb-16"
+                    >
                         <h2 className="text-4xl font-bold text-gray-900 mb-4 uppercase">Frequently Asked Questions</h2>
                         <p className="text-gray-600 max-w-2xl mx-auto italic text-lg">
                             Everything you need to know about the Texas Ethics Laws digital guide.
                         </p>
-                    </div>
+                    </motion.div>
 
                     <div className="space-y-4">
                         {[
@@ -304,7 +365,14 @@ export default function LandingPage() {
                         ].map((faq, i) => {
                             const isOpen = openFaqIndex === i;
                             return (
-                                <div key={i} className="border border-gray-200 rounded-2xl overflow-hidden transition-all duration-300 hover:border-gray-300">
+                                <motion.div 
+                                    key={i} 
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true, margin: "-20px" }}
+                                    transition={{ duration: 0.4, delay: i * 0.1 }}
+                                    className="border border-gray-200 rounded-2xl overflow-hidden transition-all duration-300 hover:border-gray-300 shadow-sm hover:shadow-md"
+                                >
                                     <button
                                         onClick={() => setOpenFaqIndex(isOpen ? null : i)}
                                         className="w-full flex items-center justify-between px-8 py-6 text-left bg-white hover:bg-gray-50 transition-colors"
@@ -326,7 +394,7 @@ export default function LandingPage() {
                                             {faq.answer}
                                         </div>
                                     </div>
-                                </div>
+                                </motion.div>
                             );
                         })}
                     </div>

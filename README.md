@@ -1,9 +1,12 @@
 <div align="center">
   <img src="./public/logo2.png" alt="Texas Ethics Law Book" width="120" />
 
-  # 🏛️ Texas Ethics Law Book - Premium Frontend
+  <br/>
+  <br/>
 
-  **A Next-Generation Digital Law Library & Practice Guide**
+  # Texas Ethics Law Book - Frontend Interface
+
+  **A Digital Law Library & Practice Guide Experience**
 
   <p>
     <a href="https://texas-ethics-book-frontend.vercel.app" target="_blank">View Live Website</a>
@@ -20,20 +23,20 @@
 
 <br />
 
-> **Welcome to the Texas Ethics Law Book frontend repository!** This project is designed with a strong focus on **Premium Aesthetics**, **Fluid Animations**, and **Seamless User Experience**. It serves as the digital front door for law students, professionals, and anyone preparing for the Texas Ethics exam.
+> **Welcome to the Texas Ethics Law Book frontend repository!** This project serves as the digital front door for law students, professionals, and anyone preparing for the Texas Ethics exam. It focuses on providing a clean, distraction-free reading environment with seamless navigation.
 
 ---
 
-## ✨ Premium Interface & Animations
+## Interface & User Experience
 
-We believe a modern web application should feel alive. That's why this frontend is heavily optimized for a buttery-smooth, premium user experience:
+The application is heavily optimized for a fluid and highly interactive user experience without compromising performance:
 
-- 🎭 **Framer Motion Integration:** Staggered fade-ins, floating hero images, and scroll-reveals that make the UI feel highly interactive without compromising performance.
-- 🎨 **Modern Tailwind CSS v4 Architecture:** Beautiful glassmorphism, soft shadows, sleek dark mode transitions, and highly tailored custom color palettes.
-- 🧩 **Radix UI & Accessible Components:** Built with headless Radix UI primitives ensuring high accessibility and pristine custom styling.
-- ⚡ **Next.js 16 App Router:** Lightning-fast page transitions, Server-Side Rendering (SSR), and advanced caching for a truly "app-like" experience on the web.
+- **Framer Motion Integration:** Staggered fade-ins, floating hero elements, and scroll-reveals that make the UI feel alive.
+- **Modern Tailwind CSS v4 Architecture:** Clean glassmorphism, soft shadows, sleek dark mode transitions, and tailored custom color palettes.
+- **Radix UI & Accessible Components:** Built with headless Radix UI primitives ensuring high accessibility and pristine custom styling.
+- **Next.js 16 App Router:** Lightning-fast page transitions, Server-Side Rendering (SSR), and advanced caching for a seamless experience on the web.
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 | Category | Technologies Used |
 |----------|------------------|
@@ -46,7 +49,7 @@ We believe a modern web application should feel alive. That's why this frontend 
 | **Payments** | Stripe Checkout Integration (`@stripe/react-stripe-js`) |
 | **Rich Text Editor** | TipTap |
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Clone & Install
 Ensure you have **Node.js (v18+)** installed.
@@ -72,7 +75,7 @@ npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## 📁 Folder Structure
+## Folder Structure
 
 ```
 ├── public/                # Static assets (images, logos, SVGs)
@@ -86,15 +89,15 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 └── package.json           # Dependencies and scripts
 ```
 
-## 💎 Key Features
+## Key Features
 
-- **📖 Interactive Reader Dashboard:** A focused, distraction-free reading mode with progress tracking, bookmarks, and rich text rendering (TipTap).
-- **💳 Seamless Checkout:** Stripe-powered subscription plans integrated directly into the UI with instant success/failure handling.
-- **🔐 Secure User Portal:** Protected routes via NextAuth, allowing users to update their profile, change passwords, and manage subscriptions safely.
-- **📱 Fully Responsive:** Carefully crafted mobile and tablet experiences ensuring the premium feel remains intact across all screen sizes.
+- **Interactive Reader Dashboard:** A focused, distraction-free reading mode with progress tracking, bookmarks, and rich text rendering (TipTap).
+- **Seamless Checkout:** Stripe-powered subscription plans integrated directly into the UI with instant success/failure handling.
+- **Secure User Portal:** Protected routes via NextAuth, allowing users to update their profile, change passwords, and manage subscriptions safely.
+- **Fully Responsive:** Carefully crafted mobile and tablet experiences ensuring consistency across all screen sizes.
 
 ---
 
 <p align="center">
-  <i>Designed and built for excellence. Happy Coding! 🚀</i>
+  <i>Designed and built for excellence.</i>
 </p>

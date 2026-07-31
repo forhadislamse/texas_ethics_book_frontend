@@ -220,6 +220,30 @@ const AuthPage = () => {
                       </Button>
                     </form>
                   </FormProvider>
+                  <div className="mt-4 flex flex-col gap-2">
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={() => {
+                        loginForm.setValue("email", "admin@gmail.com");
+                        loginForm.setValue("password", "12345678");
+                      }}
+                      className="w-full py-2 border border-primary text-primary hover:bg-primary hover:text-white transition-colors"
+                    >
+                      Test Admin Account
+                    </Button>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={() => {
+                        loginForm.setValue("email", "rforhadewu@gmail.com");
+                        loginForm.setValue("password", "123456789");
+                      }}
+                      className="w-full py-2 border border-primary text-primary hover:bg-primary hover:text-white transition-colors"
+                    >
+                      Test User Account
+                    </Button>
+                  </div>
                   <p className="mt-5 text-center text-sm text-gray-600">
                     Don't have an account?{" "}
                     <button onClick={() => router.push("/register")} className="text-primary font-semibold hover:underline">
